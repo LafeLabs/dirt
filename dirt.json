@@ -1,0 +1,15 @@
+{
+    "text":"dirt text",
+    "mouse":{
+        "x":0,
+        "y":0,
+        "z":0
+    },
+    "fft":[],
+    "icon":[],
+    "controls":[
+        {"message":"hello world"},
+        {"lat":40.000},
+        {"lon":-105.000}
+    ]
+}

@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+   <meta charset="utf-8">
+   <!--
+Self-replicating local web server on windows
+   -->
+<link href="data:image/x-icon;base64,AAABAAEAEBAQAAEABAAoAQAAFgAAACgAAAAQAAAAIAAAAAEABAAAAAAAgAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD//wAA4AcAAO/3AADH9wAA7/cAAO/3AADEdwAA7/cAAOw3AADH9wAA7HcAAO/3AADEFwAA7/cAAOAHAAD//wAA" rel="icon" type="image/x-icon">
+   <title>plots.md</title>    
+</head>
+<body>    
+    <a href = "index.html">index.html</a> 
+    <h1>plots.md</h1>
+    <pre id = "markdown"></pre>
+<style>
+</style>
+<script>
+
+dataFiles = [];
+
+var httpc = new XMLHttpRequest();
+httpc.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+        plotFiles = JSON.parse(this.responseText);
+        plotsMarkdown = "# plots.md\n\n";        
+        for(var index = 0;index < plotFiles.length; index++){
+            plotsMarkdown += "[](plots/" + plotFiles[index] +  ")\n\n";     
+        }
+        document.getElementById("markdown").innerHTML = plotsMarkdown;
+        
+        var httpcd = new XMLHttpRequest();
+        httpcd.open("POST", "save-file.php", true);
+        httpcd.setRequestHeader("Content-Type", "application/x-www-form-urlencoded;charset=utf-8");
+        httpcd.send("data=" + plotsMarkdown + "&filename=plots.md");//send text to save-file.php
+
+    }
+};
+httpc.open("GET", "list-files.php?directoryname=plots", true);
+httpc.send();
+
+
+</script>
+</body>
+</html>
+
+
+    
+    

@@ -1,0 +1,370 @@
+<!doctype html>
+<html lang="en">
+<head>
+   <meta charset="utf-8">
+<link href="data:image/x-icon;base64,AAABAAEAEBAQAAEABAAoAQAAFgAAACgAAAAQAAAAIAAAAAEABAAAAAAAgAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD/9wAA7usAAFVRAAC7uwAA//cAAPrfAAD63wAA+t8AAPjfAAD7jwAA+98AAPvfAAD71wAA++8AAP//AAD//wAA" rel="icon" type="image/x-icon">   
+   <title>Draw an icon</title>
+   <script src="https://cdn.jsdelivr.net/npm/p5@1.7.0/lib/p5.js"></script>
+</head>
+<body> 
+<div id = "control-scroll">
+    <h1>CONTROL</h1>
+    <main></main>
+    <table id = "inputtable">
+        <tr>
+            <td>message:</td>
+            <td>
+                <input>
+            </td>
+        </tr>
+        <tr>
+            <td>lat:</td>
+            <td>
+                <input>
+            </td>
+        </tr>
+        <tr>
+            <td>lon:</td>
+            <td>
+                <input>
+            </td>
+        </tr>
+    </table>
+</div>
+<div id = "data-scroll">
+    <h1>DATA</h1>
+    <h2>Live Plot</h2>
+    <div style="display:none" id="status">Status: Idle</div>
+    <img id ="live-trace">
+    <div id = "save-trace-button">SAVE PLOT</div>
+    <div id = "plot-feed"></div>
+</div>
+<script>
+dataJSON = {};
+icon0 = {
+    "type":"icon",
+    "message":"icon data",
+    "lat":40.0,
+    "lon":-105.0,
+    "temperature":8.0,
+    "brush_strokes":[]
+};
+brushstroke = [];
+thispoint = {};
+thispoint.x = 0;//x position in units of 1/1024 of width
+thispoint.y = 0;//y position in units of 1/1024 of height from top
+
+let vnaImg = null;       // Will hold the processed p5.Image object
+let isFetching = false;  // Your guard flag defined in the fetch function
+
+
+function savejson(){
+    var httpc = new XMLHttpRequest();
+    httpc.open("POST", "save-file.php", true);
+    httpc.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    httpc.send("data="+encodeURIComponent(JSON.stringify(icon,null,"    "))+"&filename=icon.json");//send text to save-file.php    
+}
+
+inputs = document.getElementById("inputtable").getElementsByTagName("INPUT");
+
+var httpc = new XMLHttpRequest();
+httpc.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+        icon = JSON.parse(this.responseText);
+        inputs[0].value = icon.message;
+        icon.brush_strokes = [];
+        icon.lat = icon0.lat;
+        icon.lon = icon0.lon;
+        icon.temperature = icon0.temperature;
+        
+        inputs[1].value = icon.lat;
+        inputs[2].value = icon.lon;
+        icon.type = "icon";
+    }
+    
+};
+httpc.open("GET", "load-file.php?filename=icon.json", true);
+httpc.send();
+
+function setup() {
+    control_canvas_width = 0.48*innerWidth;
+    createCanvas(control_canvas_width,control_canvas_width);  
+    //frameRate(10);
+    stroke(0);
+    strokeWeight(30);
+
+}
+
+
+inLine = false;
+function draw(){
+    stroke(0);
+    strokeWeight(30);
+    
+    if(mouseX > 0 && mouseX < width && mouseY > 0 && mouseY < height){
+      if (mouseIsPressed === true) {
+        if(inLine == false){
+            var  point = {};
+            point.x = Math.round(1024*mouseX/width);
+            point.y = Math.round(1024*mouseY/width);
+            brushstroke.push(point);
+        }
+        line(mouseX, mouseY, pmouseX, pmouseY);
+        inLine = true;
+        if(mouseX != pmouseX || mouseY != pmouseY){
+            var  point = {};
+            point.x = Math.round(1024*mouseX/width);
+            point.y = Math.round(1024*mouseY/width);
+            brushstroke.push(point);
+        }
+      }
+      else{
+          if(inLine){
+              icon.brush_strokes.push(JSON.parse(JSON.stringify(brushstroke)));
+              brushstroke = [];
+          }
+          inLine = false;
+      }
+  }
+    
+    if (!isFetching) {
+        fetchSingleFrame();
+    }
+    
+}
+
+
+inputs[0].onchange = function(){
+    icon.message = this.value;
+    savejson();
+}
+
+
+function mouseWheel(event) {
+    if(mouseX >= 0 && mouseX <= width && mouseY >= 0 && mouseY <= height){
+        if(event.delta > 0){ //mouse wheel down
+            icon.temperature /= 1.1;
+        }
+        else{
+            icon.temperature *= 1.1;
+        }
+    }
+}
+
+function fetchSingleFrame() {
+    isFetching = true;
+    const statusDiv = document.getElementById('status');
+    const plotImg = document.getElementById('live-trace');
+    
+    statusDiv.innerText = "Status: Fetching latest data...";
+    statusDiv.style.color = "#ffcc00"; 
+
+    fetch('bridge.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(icon) 
+    })
+    .then(response => {
+        if (!response.ok) throw new Error(`HTTP Error Status: ${response.status}`);
+        return response.text(); 
+    })
+    .then(rawText => {
+        const cleanText = rawText.trim();
+        
+        try {
+            dataJSON = JSON.parse(cleanText);
+            if (dataJSON?.image?.startsWith('data:image/png;base64,')) {
+                plotImg.src = dataJSON.image;
+                plotImg.style.display = "block";
+                statusDiv.innerText = "Status: Streaming Live...";
+                statusDiv.style.color = "#00ff96";
+            } else throw new Error("Missing or invalid image data");
+        } catch { throw new Error("Bad or malformed JSON payload"); }
+        
+        
+    })
+    .catch(error => {
+        console.error('Test pipeline error:', error);
+        statusDiv.innerText = `Status: Failed (${error.message})`;
+        statusDiv.style.color = "#ff3366"; 
+    })
+    .finally(() => {
+        // Release the guard so the p5 loop knows it can request the next frame
+        isFetching = false; 
+    });
+}
+
+document.getElementById("save-trace-button").onclick = function(){
+    
+    savejson();
+    
+    png64 = document.getElementById('live-trace').src;
+    var newimg = document.createElement("IMG");
+    document.getElementById("plot-feed").prepend(newimg);
+    newimg.src = png64;
+    var timestamp = Math.round((new Date().getTime())/1000).toString();
+    var httpc = new XMLHttpRequest();
+    var url = "save-png.php";        
+    httpc.open("POST", url, true);
+    httpc.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    httpc.send("data="+encodeURIComponent(png64.substring(22))+"&filename=plots/plot-" + timestamp +  ".png");//send text to filesaver.php
+    //drawplots();
+    
+    saveData = {};
+    saveData.xdata = dataJSON.xdata;
+    saveData.ydata = dataJSON.ydata;
+    saveData.timestamp = timestamp;
+    saveData.xlabel = dataJSON.xlabel;
+    saveData.ylabel = dataJSON.ylabel;
+    saveData.ymin = dataJSON.ymin;
+    saveData.ymax = dataJSON.ymax;
+    saveData.icon = JSON.parse(JSON.stringify(icon));
+    
+    saveData.filename = "data/data-" + timestamp + ".json";
+    saveData.plotname = "plots/plot-" + timestamp + ".png";
+    saveData.origin = "icon.html";
+    var httpcj = new XMLHttpRequest();
+    var url = "save-file.php";        
+    httpcj.open("POST", url, true);
+    httpcj.setRequestHeader("Content-Type", "application/x-www-form-urlencoded;charset=utf-8");
+    httpcj.send("data=" + JSON.stringify(saveData) + "&filename=data/data-" + timestamp + ".json");//send text to save-file.php
+
+}
+
+drawplots();
+
+function drawplots(){
+    plotfiles = [];
+    var httpcplots = new XMLHttpRequest();
+    httpcplots.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            plotfiles = JSON.parse(this.responseText);
+            plots_md = "# plots.md\n\n";
+            data_md = "# data.md\n\n";
+            
+            document.getElementById("plot-feed").innerHTML = "";
+            for(var index = plotfiles.length - 1;index >= 0;index--){
+                plots_md += "![](plots/" + plotfiles[index] + ")\n\n";
+                data_md += " - [data/data." + plotfiles[index].split("-")[1].split('.')[0] + ".json](data/data-" + plotfiles[index].split("-")[1].split('.')[0] + ".json)\n";
+                var newimg = document.createElement("IMG");
+                newimg.src = "plots/" + plotfiles[index];
+                document.getElementById("plot-feed").appendChild(newimg);
+            }
+            
+            var httpcp = new XMLHttpRequest();
+            httpcp.open("POST", "save-file.php", true);
+            httpcp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded;charset=utf-8");
+            httpcp.send("data=" + plots_md + "&filename=plots.md");//send text to save-file.php
+
+            var httpcd = new XMLHttpRequest();
+            httpcd.open("POST", "save-file.php", true);
+            httpcd.setRequestHeader("Content-Type", "application/x-www-form-urlencoded;charset=utf-8");
+            httpcd.send("data=" + data_md + "&filename=data.md");//send text to save-file.php
+
+        }
+    };
+    httpcplots.open("GET", "list-files.php?directoryname=plots", true);
+    httpcplots.send();
+}
+</script>
+<style>
+body{
+    font-family:Arial;
+}
+main{
+    display:block;
+}
+main canvas{
+    display:block;
+    border:solid;
+    margin:auto;
+}
+#inputtable{
+    font-size:1em;
+}
+#inputtable input{
+}
+#warm-switch-select-table,
+#on-off-table,
+#cold-switch-select-table{
+    margin-top:1em;
+    border-collapse: separate; /* Required for spacing to work */
+    border-spacing: 0.5em 0;    /* Horizontal spacing, Vertical spacing */
+}
+
+#warm-switch-select-table td,
+#on-off-table td,
+#cold-switch-select-table td{
+    border:solid;
+    font-size:1.5em;
+    padding: 0.25em 0.25em 0.25em 0.25em;
+    border-radius:0.4em;
+    cursor:pointer;
+}
+#warm-switch-select-table td{
+    border-color:red;
+}
+#cold-switch-select-table td{
+    border-color:blue;
+}
+#warm-switch-select-table td:hover,
+#on-off-table td:hover,
+#cold-switch-select-table td:hover{
+    background-color:yellow;
+}
+#warm-switch-select-table td:active,
+#on-off-table td:active,
+#cold-switch-select-table td:active{
+    background-color:green;
+}
+#save-trace-button{
+    border:solid;
+    padding: 0.25em 0.25em 0.25em 0.25em;
+    width:10em;
+    text-align:center;
+    display:block;
+    margin:auto;
+    border-radius:0.5em;
+    cursor:pointer;
+    font-size:1.5em;
+}
+#save-trace-button:hover{
+    background-color:yellow;
+}
+#save-trace-button:active{
+    background-color:green;
+}
+
+#control-scroll{
+    position:absolute;
+    left:0px;
+    top:0px;
+    bottom:0px;
+    width:49%;
+    overflow:scroll;
+}
+#data-scroll{
+    position:absolute;
+    right:0px;
+    top:0px;
+    bottom:0px;
+    width:49%;
+    overflow:scroll;
+    border-left:solid;
+}
+#data-scroll img{
+    max-width:97%;
+    display:block;
+    margin:auto;
+}
+h1,h2,h3{
+    font-family:Arial;
+    text-align:center;
+}
+</style>
+</body>
+</html>
+
+
+    
+    
