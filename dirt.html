@@ -9,24 +9,34 @@
 </head>
 <body> 
 <div id = "control-scroll">
-    <h1>CONTROL</h1>
     <main></main>
-    <textarea id = "input-text"></textarea>
-    <table id = "control-table"></table>
+    <textarea id = "text-input"></textarea>
 </div>
 <div id = "data-scroll">
-    <h1>DATA</h1>
-    <h2>Live Plot</h2>
-    <div style="display:none" id="status">Status: Idle</div>
     <img id ="live-trace">
-    <textarea id = "output-text"></textarea>
+    <div id = "output-text"></div>
     <div id = "save-trace-button">SAVE PLOT</div>
     <div id = "plot-feed"></div>
 </div>
 <script>
-pythonResponse = {};
 
-dirt ={};
+pythonResponse = {
+    "text":"",
+    "data":{},
+    "image":""
+};
+
+dirt = {
+    "icon":[],
+    "fft":[],
+    "text":"",
+    "mouse":{
+        "x":0,
+        "y":0,
+        "z":0
+    }
+};
+
 brushstroke = [];
 thispoint = {};
 thispoint.x = 0;//x position in units of 1/1024 of width
@@ -34,43 +44,6 @@ thispoint.y = 0;//y position in units of 1/1024 of height from top
 
 let vnaImg = null;       // Will hold the processed p5.Image object
 let isFetching = false;  // Your guard flag defined in the fetch function
-
-function savejson(){
-    var httpc = new XMLHttpRequest();
-    httpc.open("POST", "save-file.php", true);
-    httpc.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-    httpc.send("data="+encodeURIComponent(JSON.stringify(dirt,null,"    "))+"&filename=dirt.json");//send text to save-file.php    
-}
-
-var httpc = new XMLHttpRequest();
-httpc.onreadystatechange = function() {
-    if (this.readyState == 4 && this.status == 200) {
-        dirt = JSON.parse(this.responseText);
-        dirt.mouse = {};
-        dirt.mouse.x = 0;
-        dirt.mouse.y = 0;
-        dirt.mouse.z = 0;
-        dirt.icon = [];
-        document.getElementById("input-text").value = dirt.text;
-        generateControlTable();
-    }
-};
-httpc.open("GET", "load-file.php?filename=dirt.json", true);
-httpc.send();
-
-function generateControlTable() {
-  const cotrolTable = document.getElementById('control-table');
-  for (let item of dirt.controls) {
-    const row = document.createElement('tr');
-    row.innerHTML = `
-      <td><strong>${item.key}</strong></td>
-      <td>
-        <input type="text" class="control-input" data-key="${item.key}" value="${item.value}">
-      </td>
-    `;
-    cotrolTable.appendChild(row);
-  }
-}
 
 
 function setup() {
@@ -84,9 +57,12 @@ function setup() {
 
 inLine = false;
 function draw(){
+    dirt.text = document.getElementById("text-input").value;
     stroke(0);
     strokeWeight(30);
     if(mouseX > 0 && mouseX < width && mouseY > 0 && mouseY < height){
+      dirt.mouse.x = mouseX;
+      dirt.mouse.y = mouseY;
       if (mouseIsPressed === true) {
         if(inLine == false){
             var  point = {};
@@ -110,7 +86,7 @@ function draw(){
           }
           inLine = false;
       }
-  }
+    }
     
     if (!isFetching) {
         fetchSingleFrame();
@@ -132,12 +108,8 @@ function mouseWheel(event) {
 
 function fetchSingleFrame() {
     isFetching = true;
-    const statusDiv = document.getElementById('status');
     const plotImg = document.getElementById('live-trace');
     
-    statusDiv.innerText = "Status: Fetching latest data...";
-    statusDiv.style.color = "#ffcc00"; 
-
     fetch('bridge.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -152,12 +124,10 @@ function fetchSingleFrame() {
         
         try {
             pythonResponse = JSON.parse(cleanText);
-            document.getElementById("output-text").value = pythonResponse.text;
+            document.getElementById("output-text").innerHTML = pythonResponse.text;
             if (pythonResponse?.image?.startsWith('data:image/png;base64,')) {
                 plotImg.src = pythonResponse.image;
                 plotImg.style.display = "block";
-                statusDiv.innerText = "Status: Streaming Live...";
-                statusDiv.style.color = "#00ff96";
             } else throw new Error("Missing or invalid image data");
         } catch { throw new Error("Bad or malformed JSON payload"); }
         
@@ -165,8 +135,6 @@ function fetchSingleFrame() {
     })
     .catch(error => {
         console.error('Test pipeline error:', error);
-        statusDiv.innerText = `Status: Failed (${error.message})`;
-        statusDiv.style.color = "#ff3366"; 
     })
     .finally(() => {
         // Release the guard so the p5 loop knows it can request the next frame
@@ -176,8 +144,7 @@ function fetchSingleFrame() {
 
 document.getElementById("save-trace-button").onclick = function(){
     
-    savejson();
-    
+    saveDirt();
     png64 = document.getElementById('live-trace').src;
     var newimg = document.createElement("IMG");
     document.getElementById("plot-feed").prepend(newimg);
@@ -190,20 +157,32 @@ document.getElementById("save-trace-button").onclick = function(){
     httpc.send("data="+encodeURIComponent(png64.substring(22))+"&filename=plots/plot-" + timestamp +  ".png");
     
     saveData = {};
+    saveData.python_response_data = JSON.parse(JSON.stringify(pythonResponse.data));
+    saveData.dirt = JSON.parse(JSON.stringify(dirt));
+    
+    saveData.python_response_text = pythonResponse.text
+    
+    saveData.javascript_metadata = {};
+    saveData.javascript_metadata.timestamp = timestamp;
+    saveData.javascript_metadata.filename = "data/data-" + timestamp + ".json";
+    saveData.javascript_metadata.plotname = "plots/plot-" + timestamp + ".png";
+    saveData.javascript_metadata.origin = "dirt.html";
 
-    saveData.timestamp = timestamp;
-    saveData.plot_data = pythonResponse.plot_data;
-    saveData.metadata = JSON.parse(JSON.stringify(dirt));
-    saveData.filename = "data/data-" + timestamp + ".json";
-    saveData.plotname = "plots/plot-" + timestamp + ".png";
-    saveData.origin = "dirt.html";
     var httpcj = new XMLHttpRequest();
     var url = "save-file.php";        
     httpcj.open("POST", url, true);
     httpcj.setRequestHeader("Content-Type", "application/x-www-form-urlencoded;charset=utf-8");
-    httpcj.send("data=" + JSON.stringify(saveData) + "&filename=data/data-" + timestamp + ".json");//send text to save-file.php
+    httpcj.send("data=" + encodeURIComponent(JSON.stringify(saveData)) + "&filename=data/data-" + timestamp + ".json");//send text to save-file.php
 
 }
+
+function saveDirt(){
+    var httpc = new XMLHttpRequest();
+    httpc.open("POST", "save-file.php", true);
+    httpc.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    httpc.send("data="+encodeURIComponent(JSON.stringify(dirt,null,"    "))+"&filename=dirt.json");//send text to save-file.php    
+}
+
 
 drawPlots();
 
@@ -295,50 +274,16 @@ body{
 }
 main{
     display:block;
+    position:absolute;
+    left:10px;
+    top:10px;
 }
 main canvas{
     display:block;
     border:solid;
     margin:auto;
 }
-#inputtable{
-    font-size:1em;
-}
-#inputtable input{
-}
-#warm-switch-select-table,
-#on-off-table,
-#cold-switch-select-table{
-    margin-top:1em;
-    border-collapse: separate; /* Required for spacing to work */
-    border-spacing: 0.5em 0;    /* Horizontal spacing, Vertical spacing */
-}
 
-#warm-switch-select-table td,
-#on-off-table td,
-#cold-switch-select-table td{
-    border:solid;
-    font-size:1.5em;
-    padding: 0.25em 0.25em 0.25em 0.25em;
-    border-radius:0.4em;
-    cursor:pointer;
-}
-#warm-switch-select-table td{
-    border-color:red;
-}
-#cold-switch-select-table td{
-    border-color:blue;
-}
-#warm-switch-select-table td:hover,
-#on-off-table td:hover,
-#cold-switch-select-table td:hover{
-    background-color:yellow;
-}
-#warm-switch-select-table td:active,
-#on-off-table td:active,
-#cold-switch-select-table td:active{
-    background-color:green;
-}
 #save-trace-button{
     border:solid;
     padding: 0.25em 0.25em 0.25em 0.25em;
@@ -356,14 +301,25 @@ main canvas{
 #save-trace-button:active{
     background-color:green;
 }
-
+#text-input{
+    position:absolute;
+    bottom:10px;
+    left:10px;
+    width:95%;
+    height:10em;
+}
+#output-text{
+    width:95%;
+    display:block;
+    margin:auto;
+}
 #control-scroll{
     position:absolute;
     left:0px;
     top:0px;
     bottom:0px;
     width:49%;
-    overflow:scroll;
+    overflow:hidden;
 }
 #data-scroll{
     position:absolute;

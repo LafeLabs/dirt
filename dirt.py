@@ -13,7 +13,7 @@ import numpy as np
 with open("dirt.json", "r", encoding="utf-8") as file:
     file_contents = file.read()
 dirt = json.loads(file_contents)
-previous_state = copy.deepcopy(dirt)
+previous_dirt = copy.deepcopy(dirt)
 
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server:
     server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -35,11 +35,19 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server:
                     dirt = json.loads(raw_web_input.strip())# get dirt
                 except (json.JSONDecodeError, ValueError):
                     pass
-                previous_state = copy.deepcopy(dirt)
+                
 
                 python_response = {}
-                python_response['dirt'] = dirt
+                
+                # use Python to take dirt and create response to send
                 python_response['text'] = "PYTHON-----" + dirt['text'] + "-----PYTHON"
+                
+                python_response['data'] = {}
+                python_response['data']['xlabel'] = 'x'
+                python_response['data']['ylabel'] = 'y'
+                python_response['data']['ymin'] = 1023
+                python_response['data']['ymax'] = 0
+                
                 plt.cla()
                 plt.figure(figsize=(6, 6))
                 for stroke in dirt['icon']:
@@ -47,17 +55,12 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server:
                     ydata = [point['y'] for point in stroke]
                     xdata += 8*np.random.randn(len(xdata))
                     ydata += 8*np.random.randn(len(xdata))
-
                     plt.plot(xdata, ydata, color='black', linewidth=10, solid_capstyle='round')
-                python_response['plot_data'] = {}
-                python_response['plot_data']['xlabel'] = 'x'
-                python_response['plot_data']['ylabel'] = 'y'
-                python_response['plot_data']['ymin'] = 1023
-                python_response['plot_data']['ymax'] = 0
+
                 plt.xlim(0, 1023)
-                plt.ylim(python_response['plot_data']['ymin'], python_response['plot_data']['ymax'])
-                plt.xlabel(python_response['plot_data']['xlabel'])
-                plt.ylabel(python_response['plot_data']['ylabel'])        
+                plt.ylim(python_response['data']['ymin'], python_response['data']['ymax'])
+                plt.xlabel(python_response['data']['xlabel'])
+                plt.ylabel(python_response['data']['ylabel'])        
                 plt.tight_layout()
                 img_buf = io.BytesIO()
                 plt.savefig(img_buf, format='png')
@@ -69,6 +72,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server:
                 payload = json.dumps(python_response) + "\n"
                 conn.sendall(payload.encode('utf-8'))
                 conn.shutdown(socket.SHUT_WR)
+                previous_dirt = copy.deepcopy(dirt)
 
     except KeyboardInterrupt:
         print("\n=== SERVER TERMINATED CLEANLY BY USER ===")
