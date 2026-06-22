@@ -257,11 +257,10 @@ httpf.onreadystatechange = function() {
             }
         }        
         
-        document.getElementById("files-pre").innerHTML = filesmd;
         var httpcm = new XMLHttpRequest();
         httpcm.open("POST", "save-file.php", true);
         httpcm.setRequestHeader("Content-Type", "application/x-www-form-urlencoded;charset=utf-8");
-        httpcm.send("data=" + filesmd + "&filename=files.md");//send text to save-file.php
+        httpcm.send("data=" + encodeURIComponent(filesmd) + "&filename=files.md");//send text to save-file.php
 
     }
 };

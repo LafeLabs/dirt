@@ -6,15 +6,13 @@
  - [branch.html](branch.html)
  - [data.html](data.html)
  - [delete-files.html](delete-files.html)
+ - [dirt.html](dirt.html)
  - [edit-files.html](edit-files.html)
  - [files.html](files.html)
- - [icon.html](icon.html)
  - [index.html](index.html)
- - [live-web-instrument.html](live-web-instrument.html)
  - [plots.html](plots.html)
  - [qrcode.html](qrcode.html)
  - [readme.html](readme.html)
- - [text.html](text.html)
 
 ## php files
 
@@ -42,19 +40,11 @@
 
 ## json files
 
+ - [dirt.json](dirt.json)
  - [file-set.json](file-set.json)
- - [icon.json](icon.json)
- - [instrument-control.json](instrument-control.json)
- - [social-data.json](social-data.json)
- - [text.json](text.json)
 
 ## python files
 
- - [camera.ipynb](camera.ipynb)
  - [data_feed.ipynb](data_feed.ipynb)
- - [icon.ipynb](icon.ipynb)
- - [icon.py](icon.py)
- - [jupyter.ipynb](jupyter.ipynb)
- - [live_web_instrument.ipynb](live_web_instrument.ipynb)
- - [live_web_instrument.py](live_web_instrument.py)
- - [text.py](text.py)
+ - [dirt.ipynb](dirt.ipynb)
+ - [dirt.py](dirt.py)
