@@ -15,6 +15,10 @@ with open("dirt.json", "r", encoding="utf-8") as file:
 dirt = json.loads(file_contents)
 previous_dirt = copy.deepcopy(dirt)
 
+python_response = {}
+python_response['data'] = {}
+python_response['data']['ace_mode'] = 'text'
+
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server:
     server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     server.bind(('127.0.0.1', 8000))
@@ -37,17 +41,25 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server:
                     pass
                 
 
-                python_response = {}
                 
                 # use Python to take dirt and create response to send
                 python_response['text'] = "PYTHON-----" + dirt['text'] + "-----PYTHON"
                 
-                python_response['data'] = {}
                 python_response['data']['xlabel'] = 'x'
                 python_response['data']['ylabel'] = 'y'
                 python_response['data']['ymin'] = 1023
                 python_response['data']['ymax'] = 0
-                
+
+                if dirt['text'] == 'html':
+                    python_response['data']['ace_mode'] = "html"
+                if dirt['text'] == 'json':
+                    python_response['data']['ace_mode'] = "json"
+                if dirt['text'] == 'markdown':
+                    python_response['data']['ace_mode'] = "markdown"
+                if dirt['text'] == 'python':
+                    python_response['data']['ace_mode'] = "python"
+
+
                 plt.cla()
                 plt.figure(figsize=(6, 6))
                 for stroke in dirt['icon']:

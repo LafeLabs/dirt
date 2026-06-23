@@ -6,6 +6,7 @@
  - [branch.html](branch.html)
  - [data.html](data.html)
  - [delete-files.html](delete-files.html)
+ - [dirt.css](dirt.css)
  - [dirt.html](dirt.html)
  - [edit-files.html](edit-files.html)
  - [files.html](files.html)
@@ -45,6 +46,5 @@
 
 ## python files
 
- - [data_feed.ipynb](data_feed.ipynb)
  - [dirt.ipynb](dirt.ipynb)
  - [dirt.py](dirt.py)

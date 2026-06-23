@@ -2,33 +2,83 @@
 <html lang="en">
 <head>
    <meta charset="utf-8">
-<link href="data:image/x-icon;base64,AAABAAEAEBAQAAEABAAoAQAAFgAAACgAAAAQAAAAIAAAAAEABAAAAAAAgAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD/9wAA7usAAFVRAAC7uwAA//cAAPrfAAD63wAA+t8AAPjfAAD7jwAA+98AAPvfAAD71wAA++8AAP//AAD//wAA" rel="icon" type="image/x-icon">   
-   <title>P5JS::HTML::PHP::JSON::PYTHON</title>
-   <script src="https://cdn.jsdelivr.net/npm/p5@1.7.0/lib/p5.js"></script>
+
+<link href="data:image/x-icon;base64,AAABAAEAEBAQAAEABAAoAQAAFgAAACgAAAAQAAAAIAAAAAEABAAAAAAAgAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAf/4AAEACAABf+gAAX/oAAF/6AABf+gAAX/oAAF/6AABf+gAAX/oAAF/6AABf+gAAQAIAAH/+AAAAAAAA" rel="icon" type="image/x-icon">
+   <title>dirt</title>
    
+<script>
+  window.MathJax = {
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']],
+      processEscapes: true
+    },
+    options: {
+      // 1. Tell MathJax to ignore everything on the page by default
+      ignoreHtmlClass: '.*',
+      
+      // 2. Only allow elements containing this specific class name to typeset
+      processHtmlClass: 'mathjax'
+    }
+  };
+  
+  //MathJax.typesetPromise([document.getElementById("html-output")]);
+
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.0.0/tex-mml-chtml.min.js"></script>
+   
+   <script src="https://cdn.jsdelivr.net/npm/p5@1.7.0/lib/p5.js"></script>
+   <script src = "https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/addons/p5.sound.js"></script>
+
+   <script src = "https://cdnjs.cloudflare.com/ajax/libs/showdown/1.8.6/showdown.js"></script>
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.6/ace.js" type="text/javascript" charset="utf-8"></script>
+
+   <link rel="stylesheet" href="dirt.css">
+  
 </head>
 <body> 
-<div id = "control-scroll">
+<div class = "dirt-pane" id = "dirt-in">
     <main></main>
-    <textarea id = "text-input"></textarea>
+    <div id = "text-input" contenteditable="true" spellcheck="false"></div>
 </div>
-<div id = "data-scroll">
-    <img id ="live-trace">
-    <div id = "output-text"></div>
-    <div id = "save-trace-button">SAVE PLOT</div>
+<div class = "dirt-pane" id = "dirt-out">
+    <img id ="live-plot">
+    <div class= "mathjax" id = "html-output"></div>
+    <div class = "button" id = "save-data-button">SAVE DATA</div>
     <div id = "plot-feed"></div>
 </div>
 <script>
 
+editor = ace.edit("text-input");
+editor.setTheme("ace/theme/github");
+//editor.setTheme("ace/theme/vibrant_ink");
+//editor.getSession().setMode("ace/mode/html");
+//editor.getSession().setMode("ace/mode/markdown");
+//editor.getSession().setMode("ace/mode/text");
+editor.getSession().setMode("ace/mode/markdown");
+editor.getSession().setUseWrapMode(true);
+editor.$blockScrolling = Infinity;
+
+var converter = new showdown.Converter();
+// for more on options see here:
+// https://github.com/showdownjs/showdown/wiki/Showdown-Options
+converter.setOption('literalMidWordUnderscores', 'true');
+converter.setOption('tables', 'true')
+
+
 pythonResponse = {
     "text":"",
-    "data":{},
+    "data":{
+        "ace_mode":"text"
+    },
     "image":""
 };
+previousPythonResponse = JSON.parse(JSON.stringify(pythonResponse));
 
 dirt = {
     "icon":[],
-    "fft":[],
+    "spectrum":[],
+    "bin_frequency":21.533,
     "text":"",
     "mouse":{
         "x":0,
@@ -36,6 +86,17 @@ dirt = {
         "z":0
     }
 };
+
+var soundFile, mic, osc,fft;
+var analyzer;
+var numSamples = 1024;
+// Array of amplitude values (-1 to +1) over time.
+var samples = [];
+var currentSource = "mic";
+amp = 0;
+freq = 666;//Hz
+oscon= false;
+
 
 brushstroke = [];
 thispoint = {};
@@ -52,12 +113,61 @@ function setup() {
     //frameRate(10);
     stroke(0);
     strokeWeight(20);
+    
+    mic = new p5.AudioIn();
+    mic.start();
+    //analyzer.setInput(mic);
+    
+    fft = new p5.FFT();
+    fft.setInput(mic);
+    osc = new p5.SinOsc(); // set frequency and type
+    osc.amp(amp);    
+
+    
 }
 
 
 inLine = false;
 function draw(){
-    dirt.text = document.getElementById("text-input").value;
+    
+    spectrum = fft.analyze();
+    nyquistFreq = sampleRate() / 2;
+    binFreq = nyquistFreq / (spectrum.length);
+    
+    fill(255);
+     noStroke();     
+     rect(0, height - 100, width, height); // Draws across the bottom 100px
+     stroke(0);
+     strokeWeight(1);
+      noFill();
+      beginShape();
+        vertex(0,height);
+       for (let i = 0; i < spectrum.length; i++) {
+        vertex(i, map(spectrum[i], 0, 255, height, height - 100));
+        
+      }
+      vertex(width,height);
+      endShape(); 
+     
+    if(oscon){
+        if(mouseX > 0 && mouseX < width && mouseY > 0 && mouseY < height){
+            if(tuneMode){
+                amp = map(mouseY, 0, height, 1, 0.01);    
+                freq = map(mouseX, 0, width, 60, 10000);                
+            }
+        }
+        osc.amp(amp);
+        osc.freq(freq);
+    }
+
+    dirt.audio_tone_on = oscon;
+    dirt.audio_tone_amplitude = amp;
+    dirt.audio_tone_frequency = freq;
+    dirt.spectrum = spectrum;
+    dirt.bin_frequency = binFreq;
+    
+    dirt.text = editor.getSession().getValue();;
+
     stroke(0);
     strokeWeight(30);
     if(mouseX > 0 && mouseX < width && mouseY > 0 && mouseY < height){
@@ -106,9 +216,26 @@ function mouseWheel(event) {
     }
 }
 
+tuneMode = true;
+
+function keyPressed() {
+  if (key === ' ' && mouseX >= 0 && mouseX <= width && mouseY >= 0 && mouseY <= height) {
+        if(!oscon){
+            osc.start();
+        }
+        else{
+            osc.stop();
+        }
+        oscon = !oscon;     
+  }
+  if(key === 't'){
+      tuneMode = !tuneMode;
+  }
+}
+
 function fetchSingleFrame() {
     isFetching = true;
-    const plotImg = document.getElementById('live-trace');
+    const plotImg = document.getElementById('live-plot');
     
     fetch('bridge.php', {
         method: 'POST',
@@ -124,7 +251,16 @@ function fetchSingleFrame() {
         
         try {
             pythonResponse = JSON.parse(cleanText);
-            document.getElementById("output-text").innerHTML = pythonResponse.text;
+            document.getElementById("html-output").innerHTML = converter.makeHtml(pythonResponse.text);
+    //        MathJax.Hub.Typeset();//tell Mathjax to update the math
+    
+            if(pythonResponse.data.ace_mode != previousPythonResponse.data.ace_mode){
+                editor.getSession().setMode("ace/mode/" + pythonResponse.data.ace_mode);
+                editor.setValue("ace_mode=" + pythonResponse.data.ace_mode);
+            }
+
+            previousPythonResponse = JSON.parse(JSON.stringify(pythonResponse))
+            
             if (pythonResponse?.image?.startsWith('data:image/png;base64,')) {
                 plotImg.src = pythonResponse.image;
                 plotImg.style.display = "block";
@@ -142,10 +278,10 @@ function fetchSingleFrame() {
     });
 }
 
-document.getElementById("save-trace-button").onclick = function(){
+document.getElementById("save-data-button").onclick = function(){
     
     saveDirt();
-    png64 = document.getElementById('live-trace').src;
+    png64 = document.getElementById('live-plot').src;
     var newimg = document.createElement("IMG");
     document.getElementById("plot-feed").prepend(newimg);
     newimg.src = png64;
@@ -267,78 +403,6 @@ httpf.onreadystatechange = function() {
 httpf.open("GET", "list-files.php", true);
 httpf.send();
 </script>
-<style>
-body{
-    font-family:Arial;
-}
-main{
-    display:block;
-    position:absolute;
-    left:10px;
-    top:10px;
-}
-main canvas{
-    display:block;
-    border:solid;
-    margin:auto;
-}
-
-#save-trace-button{
-    border:solid;
-    padding: 0.25em 0.25em 0.25em 0.25em;
-    width:10em;
-    text-align:center;
-    display:block;
-    margin:auto;
-    border-radius:0.5em;
-    cursor:pointer;
-    font-size:1.5em;
-}
-#save-trace-button:hover{
-    background-color:yellow;
-}
-#save-trace-button:active{
-    background-color:green;
-}
-#text-input{
-    position:absolute;
-    bottom:10px;
-    left:10px;
-    width:95%;
-    height:10em;
-}
-#output-text{
-    width:95%;
-    display:block;
-    margin:auto;
-}
-#control-scroll{
-    position:absolute;
-    left:0px;
-    top:0px;
-    bottom:0px;
-    width:49%;
-    overflow:hidden;
-}
-#data-scroll{
-    position:absolute;
-    right:0px;
-    top:0px;
-    bottom:0px;
-    width:49%;
-    overflow:scroll;
-    border-left:solid;
-}
-#data-scroll img{
-    max-width:97%;
-    display:block;
-    margin:auto;
-}
-h1,h2,h3{
-    font-family:Arial;
-    text-align:center;
-}
-</style>
 </body>
 </html>
 
