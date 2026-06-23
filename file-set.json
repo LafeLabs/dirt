@@ -20,6 +20,7 @@
     "files.md",
     "generate-file-set.php",
     "index.html",
+    "jupyter.bat",
     "list-branches.php",
     "list-files.php",
     "load-file.php",
