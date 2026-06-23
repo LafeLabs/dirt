@@ -88,3 +88,7 @@ ln -s /var/www/html ~/Desktop/html
  - [dirt.ipynb](dirt.ipynb)
  - [dirt.py](dirt.py)
 
+## Screenshot
+
+![](dirt.png)
+
