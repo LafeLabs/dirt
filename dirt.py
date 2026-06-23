@@ -43,7 +43,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server:
 
                 
                 # use Python to take dirt and create response to send
-                python_response['text'] = "PYTHON-----" + dirt['text'] + "-----PYTHON"
+                python_response['text'] = "z = "  + str(dirt['mouse']['z']) +  "PYTHON-----" + dirt['text'] + "-----PYTHON"
                 
                 python_response['data']['xlabel'] = 'x'
                 python_response['data']['ylabel'] = 'y'

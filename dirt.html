@@ -49,6 +49,8 @@
 </div>
 <script>
 
+textInput = document.getElementById("text-input");
+
 editor = ace.edit("text-input");
 editor.setTheme("ace/theme/github");
 //editor.setTheme("ace/theme/vibrant_ink");
@@ -83,6 +85,7 @@ dirt = {
     "audio_tone_amplitude": 0,
     "audio_tone_frequency": 666,    
     "text":"",
+    "keystroke":"",
     "mouse":{
         "x":0,
         "y":0,
@@ -132,7 +135,19 @@ function setup() {
 
 inLine = false;
 function draw(){
-    
+
+    if(mouseX > 0 && mouseX < width && mouseY > 0 && mouseY < height){
+        document.getElementsByTagName("main")[0].getElementsByTagName("canvas")[0].style.borderColor = "green";
+    }    
+    else{
+        document.getElementsByTagName("main")[0].getElementsByTagName("canvas")[0].style.borderColor = "black";
+    }
+    if(document.getElementById("text-input").children[0] ===document.activeElement){
+       document.getElementById("text-input").style.borderColor= "green"; 
+    }
+    else{
+        document.getElementById("text-input").style.borderColor= "black"; 
+    }
     spectrum = fft.analyze();
     nyquistFreq = sampleRate() / 2;
     binFreq = nyquistFreq / (spectrum.length);
@@ -222,7 +237,10 @@ function mouseWheel(event) {
 tuneMode = true;
 
 function keyPressed() {
-  if (key === ' ' && mouseX >= 0 && mouseX <= width && mouseY >= 0 && mouseY <= height) {
+    if(mouseX >= 0 && mouseX <= width && mouseY >= 0 && mouseY <= height){
+        dirt.keystroke = key;
+    }
+    if (key === ' ' && mouseX >= 0 && mouseX <= width && mouseY >= 0 && mouseY <= height) {
         if(!oscon){
             osc.start();
         }
