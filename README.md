@@ -92,3 +92,6 @@ ln -s /var/www/html ~/Desktop/html
 
 ![](dirt.png)
 
+## Sticker
+
+![](sticker.png)
