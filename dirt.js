@@ -89,7 +89,7 @@ inLine = false;
 function draw(){
     p5jsData.audio_spectrum = fft.analyze();
     nyquistFreq = sampleRate() / 2;
-    binFreq = nyquistFreq / (p5jsData.audio_spectrum.length);
+    p5jsData.spectrum_bin_frequency = nyquistFreq / (p5jsData.audio_spectrum.length);
     fill(255);
     noStroke();     
     rect(0, height - 100, width, height); 
@@ -162,3 +162,5 @@ function keyPressed() {
         p5jsData.keystroke = key;
     }
 }
+
+

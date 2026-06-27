@@ -1,97 +1,339 @@
-# [dirt](https://github.com/LafeLabs/dirt/)
+# Dirt
 
-Dirt connects the human body to Python using [p5.js](https://p5js.org/) and self-replicating, self-editing web code.  The system can evolve itself in a swarm of operators, servers, bots, and instruments. 
-
-![](qrcode.png)
-
-## [xampp for install on  windows or mac](https://www.apachefriends.org/download.html)
-
-## [self-replicating php script](https://raw.githubusercontent.com/LafeLabs/dirt/refs/heads/main/replicate-file-set.php)
-
-
-## Install code on linux:
+## dirt.html
 
 ```
-sudo apt update
-sudo apt install apache2 -y
-sudo apt install php libapache2-mod-php -y
-cd /var/www/html
-sudo rm index.html
-sudo apt-get install curl
-sudo curl -o replicate-file-set.php https://raw.githubusercontent.com/LafeLabs/dirt/refs/heads/main/replicate-file-set.php
-cd ..
-sudo chmod -R 0777 *
-cd html
-php replicate-file-set.php
-sudo chmod -R 0777 *
-ln -s /var/www/html ~/Desktop/html
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <link href="data:image/x-icon;base64,AAABAAEAEBAQAAEABAAoAQAAFgAAACgAAAAQAAAAIAAAAAEABAAAAAAAgAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAQAAfX0AAH19AAB9fQAAfX0AAH19AAB9fQAAfX0AAH19AAB9fQAAfX0AAH19AAB9fQAAfX0AAH19AAABAQAA" rel="icon" type="image/x-icon">
+   <title>dirt</title>
+   <script src="https://cdn.jsdelivr.net/npm/p5@1.7.0/lib/p5.js"></script>
+   <script src = "https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/addons/p5.sound.js"></script>
+    <link rel="stylesheet" href="dirt.css">
+    <script src="dirt.js"></script>    
+</head>
+<body> 
+    <main></main>
+    <div id = "live-html"></div>
+</div>
+</body>
+</html>
 ```
-## python dependencies
 
- - [matplotlib](https://matplotlib.org/)
- - [numpy](https://numpy.org/)
+## dirt.css
 
-## JavaScript Dependencies
+```
+main{
+    position:absolute;
+    left:1%;
+    top:1%;
+    border:solid;
+    border-radius:0.3%;
+    border-width:0.3%;
+}
+#live-html{
+    position:absolute;
+    right:1%;
+    top:1%;
+    bottom:1%;
+    width:48%;
+    border:solid;
+    border-radius:0.3%;
+    border-width:0.3%;
+}
 
- - [p5.js(human interface)](https://p5js.org/)
- - [ace.js(code syntax highlighting)](https://ace.c9.io/)
- - [showdown.js(markdown to html conversion)](https://github.com/showdownjs/showdown)
- - [mathjax.js(math typesetting)](https://www.mathjax.org/)
- - [qrcode.js(optional)](https://davidshimjs.github.io/qrcodejs/)
- - [p5.sound.js(browser sound input/output)](https://p5js.org/reference/p5.sound/)
+```
 
-## web files
+## dirt.js
 
- - [branch.html](branch.html)
- - [data.html](data.html)
- - [delete-files.html](delete-files.html)
- - [dirt.css](dirt.css)
- - [dirt.html](dirt.html)
- - [edit-files.html](edit-files.html)
- - [files.html](files.html)
- - [index.html](index.html)
- - [plots.html](plots.html)
- - [qrcode.html](qrcode.html)
- - [readme.html](readme.html)
+```
+p5jsData = {
+    "glyph":[],
+    "audio_spectrum":[],
+    "spectrum_bin_frequency":21.533,
+    "keystroke":"",
+    "mouse":{
+        "x":0,
+        "y":0,
+        "wheel":0,
+        "left_click":false
+    }
+};
 
-## php files
+var mic, fft;
 
- - [branch.php](branch.php)
- - [bridge.php](bridge.php)
- - [delete-branch.php](delete-branch.php)
- - [delete-file.php](delete-file.php)
- - [generate-file-set.php](generate-file-set.php)
- - [list-branches.php](list-branches.php)
- - [list-files.php](list-files.php)
- - [load-file.php](load-file.php)
- - [replicate-file-set.php](replicate-file-set.php)
- - [replicate-local-file-set.php](replicate-local-file-set.php)
- - [save-file-get.php](save-file-get.php)
- - [save-file.php](save-file.php)
- - [save-png.php](save-png.php)
- - [upload-image.php](upload-image.php)
+brushstroke = [];
+thispoint = {};
+thispoint.x = 0;
+thispoint.y = 0;
 
-## markdown files
+let isFetching = false;  
 
- - [README.md](README.md)
- - [data.md](data.md)
- - [files.md](files.md)
- - [plots.md](plots.md)
+// Setup the connection
+const socket = new WebSocket("ws://127.0.0.1:8080");
+let serverReady = true;
 
-## json files
+// FIX 1: Set up the invisible double-buffer images automatically on startup
+let currentImgIndex = 1;
+window.addEventListener('DOMContentLoaded', () => {
+    const container = document.getElementById("live-html");
+    if (container) {
+        container.innerHTML = `
+            <div style="position: relative; width: 100%; height: auto;">
+                <img id="py-img-1" style="position: absolute; top: 0; left: 0; width: 100%; height: auto; display: block; opacity: 1;">
+                <img id="py-img-2" style="position: absolute; top: 0; left: 0; width: 100%; height: auto; display: block; opacity: 0;">
+            </div>
+        `;
+    }
+});
 
- - [dirt.json](dirt.json)
- - [file-set.json](file-set.json)
+socket.onmessage = function(event) {
+    // Extract the raw base64 URL inside the <img> tag sent from Python
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(event.data, 'text/html');
+    const imgTag = doc.querySelector('img');
+    
+    if (imgTag) {
+        const newSrc = imgTag.getAttribute('src');
+        
+        // Determine which image element is currently hidden in the background
+        const nextImgIndex = currentImgIndex === 1 ? 2 : 1;
+        const activeImg = document.getElementById(`py-img-${currentImgIndex}`);
+        const nextImg = document.getElementById(`py-img-${nextImgIndex}`);
+        
+        if (nextImg && activeImg) {
+            // Load the new image completely in the background
+            nextImg.src = newSrc;
+            
+            // FIX 2: Only swap visibility AFTER the browser has completely processed the new image
+            nextImg.onload = function() {
+                nextImg.style.opacity = "1";   // Fade the new image in instantly
+                activeImg.style.opacity = "0";  // Hide the old image seamlessly
+                currentImgIndex = nextImgIndex; // Swap roles for the next frame
+                
+                // Open the gate for the next p5.js frame calculation
+                serverReady = true; 
+            };
+        } else {
+            serverReady = true;
+        }
+    } else {
+        serverReady = true;
+    }
+};
 
-## python files
+function setup() {
+    control_canvas_width = 0.48*innerWidth;
+    createCanvas(0.48*innerWidth,0.97*innerHeight);  
+    mic = new p5.AudioIn();
+    mic.start();
+    fft = new p5.FFT();
+    fft.setInput(mic);
+    frameRate(20); 
+    stroke(0);
+    strokeWeight(20);
+}
 
- - [dirt.ipynb](dirt.ipynb)
- - [dirt.py](dirt.py)
+inLine = false;
+function draw(){
+    p5jsData.audio_spectrum = fft.analyze();
+    nyquistFreq = sampleRate() / 2;
+    binFreq = nyquistFreq / (p5jsData.audio_spectrum.length);
+    fill(255);
+    noStroke();     
+    rect(0, height - 100, width, height); 
+    stroke(0);
+    strokeWeight(1);
+    noFill();
+    beginShape();
+    vertex(0,height);
+    for (let index = 0; index < p5jsData.audio_spectrum.length; index++) {
+        vertex(index, map(p5jsData.audio_spectrum[index], 0, 255, height, height - 100));
+    }
+    vertex(width,height);
+    endShape(); 
+    stroke(0);
+    strokeWeight(30);
+    
+    if(mouseX > 0 && mouseX < width && mouseY > 0 && mouseY < height){
+        p5jsData.mouse.x = mouseX;
+        p5jsData.mouse.y = mouseY;
+    }
+    
+    if(mouseX > 0 && mouseX < width && mouseY > 0 && mouseY < width){
+      if (mouseIsPressed === true) {
+        if(inLine == false){
+            var point = {};
+            point.x = Math.round(1024*mouseX/width);
+            point.y = Math.round(1024*mouseY/width);
+            brushstroke.push(point);
+        }
+        line(mouseX, mouseY, pmouseX, pmouseY);
+        inLine = true;
+        if(mouseX != pmouseX || mouseY != pmouseY){
+            var point = {};
+            point.x = Math.round(1024*mouseX/width);
+            point.y = Math.round(1024*mouseY/width);
+            brushstroke.push(point);
+        }
+      }
+      else{
+          if(inLine){
+              p5jsData.glyph.push(JSON.parse(JSON.stringify(brushstroke)));
+              brushstroke = [];
+          }
+          inLine = false;
+      }
+    }
+    
+    if (socket.readyState === WebSocket.OPEN && serverReady === true) {
+        serverReady = false; 
+        socket.send(JSON.stringify(p5jsData));
+    }
+    
+    p5jsData.keystroke = "";
+    p5jsData.left_click = false;
+}
 
-## Screenshot
+function mouseWheel(event) {
+    if(mouseX >= 0 && mouseX <= width && mouseY >= 0 && mouseY <= height){
+        if(event.delta > 0){ 
+            p5jsData.mouse.wheel--;
+        }
+        else{
+            p5jsData.mouse.wheel++;
+        }
+    }
+}
 
-![](dirt.png)
+function keyPressed() {
+    if(mouseX >= 0 && mouseX <= width && mouseY >= 0 && mouseY <= height){
+        p5jsData.keystroke = key;
+    }
+}
+```
 
-## Sticker
+## dirt.py
 
-![](sticker.png)
+```
+import asyncio
+import json
+import websockets
+import io
+import base64
+import numpy as np
+
+# Force Matplotlib to stay in the background without opening window GUIs
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+
+async def handle_connection(websocket):
+    print("[CONNECTED] Python is standing by for p5.js requests.")
+    try:
+        while True:
+            p5js_data_raw = await websocket.recv()
+            p5js_data = json.loads(p5js_data_raw)
+            
+            # Use exactly one figure slot in memory to prevent thread clipping
+            plt.figure(1, figsize=(6, 6))
+            plt.clf() 
+            
+            for stroke in p5js_data.get('glyph', []):
+                if not stroke:
+                    continue
+                xdata = [point['x'] for point in stroke]
+                ydata = [point['y'] for point in stroke]
+                
+                # Apply random jitter arrays
+                xdata += 8 * np.random.randn(len(xdata))
+                ydata += 8 * np.random.randn(len(ydata))
+                
+                plt.plot(xdata, ydata, color='black', linewidth=10, solid_capstyle='round')
+            
+            plt.xlim(0, 1023)
+            plt.ylim(0, 1023)
+            
+            # Match p5.js coordinates and remove chart borders
+            plt.gca().invert_yaxis() 
+            plt.axis('off')          
+            plt.tight_layout(pad=0)
+            
+            # Save to memory bytes
+            img_buf = io.BytesIO()
+            plt.savefig(img_buf, format='png', bbox_inches='tight', pad_inches=0)
+            img_buf.seek(0)
+            
+            b64_string = base64.b64encode(img_buf.read()).decode('utf-8')
+            imagedata = f"data:image/png;base64,{b64_string}"
+            html_response = f'<img src="{imagedata}" style="width:100%; height:auto;">'
+            
+            # Send back the response (unblocks JavaScript)
+            await websocket.send(html_response)
+            
+    except websockets.exceptions.ConnectionClosed:
+        print("[DISCONNECTED] p5.js stopped the stream.")
+
+async def main():
+    async with websockets.serve(handle_connection, "127.0.0.1", 8080):
+        await asyncio.Future()
+
+if __name__ == "__main__":
+    asyncio.run(main())
+
+```
+
+## dirt.bat
+
+```
+@echo off
+echo [DEBUG 1] Switching folders...
+cd /d "C:\xampp\htdocs\dirt"
+echo [DEBUG 2] Launching Python...
+call "%USERPROFILE%\anaconda3\Scripts\activate.bat" "%USERPROFILE%\anaconda3"
+echo [DEBUG 2] running python
+python dirt.py
+pause
+```
+
+## dirt.php
+
+```
+<?php
+
+$dirtJSONurl = "https://dirt-swarm.art/dirt.json";
+$json_raw = file_get_contents($dirtJSONurl);
+$dirtJSON = json_decode($json_raw);
+
+mkdir("data");
+mkdir("plots");
+
+$baseurl = explode("dirt.json",$dirtJSONurl)[0];
+
+foreach($file_set as $value){
+    copy($baseurl.$value,$value);
+}
+
+?>
+<a href = "dirt.html">dirt.html</a>
+<style>
+body{
+    font-size:3em;
+    font-family:arial;
+}
+a{
+    font-size:3em;
+    color:blue;
+}
+</style>
+```
+
+# dirt.json
+
+```
+[
+    "dirt.md","dirt.html","dirt.css","dirt.js","dirt.py","dirt.bat","dirt.php","dirt.json"
+]
+```

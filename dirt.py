@@ -35,7 +35,18 @@ async def handle_connection(websocket):
             
             plt.xlim(0, 1023)
             plt.ylim(0, 1023)
+            p5js_data["mouse"]["x"] = np.round(p5js_data["mouse"]["x"])
+            p5js_data["mouse"]["y"] = np.round(p5js_data["mouse"]["y"])
+
+            plt.text(10,50,f'key = {p5js_data["keystroke"]}')
+            plt.text(10,100,f'mouse x = {p5js_data["mouse"]["x"]}')
+            plt.text(10,150,f'mouse y = {p5js_data["mouse"]["y"]}')
+            plt.text(10,200,f'mouse wheel = {p5js_data["mouse"]["wheel"]}')
+            peak_audio_frequency = np.argmax(p5js_data["audio_spectrum"])*p5js_data["spectrum_bin_frequency"]
+            plt.text(10,250,f'peak frequency = {peak_audio_frequency} Hz')
             
+#            plt.text(10,200,f'mouse wheel = {p5js_data["mouse"]["wheel"]}')
+
             # Match p5.js coordinates and remove chart borders
             plt.gca().invert_yaxis() 
             plt.axis('off')          
