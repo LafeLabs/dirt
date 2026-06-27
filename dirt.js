@@ -142,8 +142,6 @@ function draw(){
         socket.send(JSON.stringify(p5jsData));
     }
     
-    p5jsData.keystroke = "";
-    p5jsData.left_click = false;
 }
 
 function mouseWheel(event) {
@@ -163,4 +161,7 @@ function keyPressed() {
     }
 }
 
-
+function mouseClicked() {
+  // Code to run.
+  p5jsData.mouse.left_click = !p5jsData.mouse.left_click;
+}
