@@ -1,4 +1,3 @@
-
 p5jsData = {
     "glyph":[],
     "audio_spectrum":[],
@@ -14,21 +13,65 @@ p5jsData = {
 
 var mic, fft;
 
-
 brushstroke = [];
 thispoint = {};
-thispoint.x = 0;//x position in units of 1/1024 of width
-thispoint.y = 0;//y position in units of 1/1024 of height from top
+thispoint.x = 0;
+thispoint.y = 0;
 
-let isFetching = false;  //  guard flag defined in the fetch function
+let isFetching = false;  
 
+// Setup the connection
 const socket = new WebSocket("ws://127.0.0.1:8080");
+let serverReady = true;
+
+// FIX 1: Set up the invisible double-buffer images automatically on startup
+let currentImgIndex = 1;
+window.addEventListener('DOMContentLoaded', () => {
+    const container = document.getElementById("live-html");
+    if (container) {
+        container.innerHTML = `
+            <div style="position: relative; width: 100%; height: auto;">
+                <img id="py-img-1" style="position: absolute; top: 0; left: 0; width: 100%; height: auto; display: block; opacity: 1;">
+                <img id="py-img-2" style="position: absolute; top: 0; left: 0; width: 100%; height: auto; display: block; opacity: 0;">
+            </div>
+        `;
+    }
+});
 
 socket.onmessage = function(event) {
-    // Dynamically update the viewport when Python answers back
-    document.getElementById("live-html").innerHTML = event.data;
+    // Extract the raw base64 URL inside the <img> tag sent from Python
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(event.data, 'text/html');
+    const imgTag = doc.querySelector('img');
+    
+    if (imgTag) {
+        const newSrc = imgTag.getAttribute('src');
+        
+        // Determine which image element is currently hidden in the background
+        const nextImgIndex = currentImgIndex === 1 ? 2 : 1;
+        const activeImg = document.getElementById(`py-img-${currentImgIndex}`);
+        const nextImg = document.getElementById(`py-img-${nextImgIndex}`);
+        
+        if (nextImg && activeImg) {
+            // Load the new image completely in the background
+            nextImg.src = newSrc;
+            
+            // FIX 2: Only swap visibility AFTER the browser has completely processed the new image
+            nextImg.onload = function() {
+                nextImg.style.opacity = "1";   // Fade the new image in instantly
+                activeImg.style.opacity = "0";  // Hide the old image seamlessly
+                currentImgIndex = nextImgIndex; // Swap roles for the next frame
+                
+                // Open the gate for the next p5.js frame calculation
+                serverReady = true; 
+            };
+        } else {
+            serverReady = true;
+        }
+    } else {
+        serverReady = true;
+    }
 };
-
 
 function setup() {
     control_canvas_width = 0.48*innerWidth;
@@ -37,23 +80,19 @@ function setup() {
     mic.start();
     fft = new p5.FFT();
     fft.setInput(mic);
-
+    frameRate(20); 
     stroke(0);
     strokeWeight(20);
-
 }
-
 
 inLine = false;
 function draw(){
-
-    //listen to the microphone and turn it into data, plot the data
     p5jsData.audio_spectrum = fft.analyze();
     nyquistFreq = sampleRate() / 2;
     binFreq = nyquistFreq / (p5jsData.audio_spectrum.length);
     fill(255);
     noStroke();     
-    rect(0, height - 100, width, height); // Draws across the bottom 100px
+    rect(0, height - 100, width, height); 
     stroke(0);
     strokeWeight(1);
     noFill();
@@ -67,17 +106,15 @@ function draw(){
     stroke(0);
     strokeWeight(30);
     
-
-    // get mouse position if it is in the p5js canvas:    
     if(mouseX > 0 && mouseX < width && mouseY > 0 && mouseY < height){
         p5jsData.mouse.x = mouseX;
         p5jsData.mouse.y = mouseY;
     }
-    // if it is in the upper square, add any brush strokes to the glyph:
+    
     if(mouseX > 0 && mouseX < width && mouseY > 0 && mouseY < width){
       if (mouseIsPressed === true) {
         if(inLine == false){
-            var  point = {};
+            var point = {};
             point.x = Math.round(1024*mouseX/width);
             point.y = Math.round(1024*mouseY/width);
             brushstroke.push(point);
@@ -85,7 +122,7 @@ function draw(){
         line(mouseX, mouseY, pmouseX, pmouseY);
         inLine = true;
         if(mouseX != pmouseX || mouseY != pmouseY){
-            var  point = {};
+            var point = {};
             point.x = Math.round(1024*mouseX/width);
             point.y = Math.round(1024*mouseY/width);
             brushstroke.push(point);
@@ -100,22 +137,18 @@ function draw(){
       }
     }
     
-    if (socket.readyState === WebSocket.OPEN) {
+    if (socket.readyState === WebSocket.OPEN && serverReady === true) {
+        serverReady = false; 
         socket.send(JSON.stringify(p5jsData));
-    } else {
-        // Optional: Diagnostic log to track status if things stall
-        console.log("WebSocket is initializing... current state: " + socket.readyState);
     }
     
     p5jsData.keystroke = "";
     p5jsData.left_click = false;
-    
 }
 
-// if mouse wheel event, update the mouse wheel data
 function mouseWheel(event) {
     if(mouseX >= 0 && mouseX <= width && mouseY >= 0 && mouseY <= height){
-        if(event.delta > 0){ //mouse wheel down
+        if(event.delta > 0){ 
             p5jsData.mouse.wheel--;
         }
         else{
@@ -124,11 +157,8 @@ function mouseWheel(event) {
     }
 }
 
-
-// if a key is pressed, update the key variable
 function keyPressed() {
     if(mouseX >= 0 && mouseX <= width && mouseY >= 0 && mouseY <= height){
         p5jsData.keystroke = key;
     }
 }
-

@@ -8,6 +8,7 @@
  - [delete-files.html](delete-files.html)
  - [dirt.css](dirt.css)
  - [dirt.html](dirt.html)
+ - [dirt.js](dirt.js)
  - [edit-files.html](edit-files.html)
  - [files.html](files.html)
  - [index.html](index.html)
