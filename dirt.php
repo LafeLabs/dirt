@@ -1,6 +1,6 @@
 <?php
 
-$dirtJSONurl = "https://dirt-swarm.art/dirt.json";
+$dirtJSONurl = "https://raw.githubusercontent.com/LafeLabs/dirt/refs/heads/main/dirt.json";
 $json_raw = file_get_contents($dirtJSONurl);
 $dirtJSON = json_decode($json_raw);
 
