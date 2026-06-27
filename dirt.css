@@ -1,85 +1,18 @@
-body{
-    font-family:Arial;
-}
-.dirt-pane{
-    position:absolute;
-    width:49%;
-    height:97%;
-    border:solid;
-    border-width:3px;
-    border-radius:0.5%;
-    top:0.5%;
-    bottom:0.5%;
-}
-#dirt-in{
-    left:0.25%;
-    overflow:hidden;
-}
-#dirt-out{
-    right:0.25%;
-    overflow:scroll;
-    padding-top:0.5%;
-}
 main{
-    display:block;
     position:absolute;
-    left:0.5%;
-    top:0.5%;
-}
-main canvas{
-    display:block;
-    border:solid;
-    margin:auto;
-}
-.button{
-    border:solid;
-    padding: 0.25em 0.25em 0.25em 0.25em;
-    border-radius:0.5em;
-    text-align:center;
-    cursor:pointer;
-}
-.button:hover{
-    background-color:yellow;
-}
-.button:active{
-    background-color:green;
-}
-#save-data-button{
-    width:10em;
-    display:block;
-    margin:auto;
-    font-size:1.5em;
-}
-#text-input{
-    position:absolute;
-    bottom:1%;
     left:1%;
-    width:97%;
-    height:8em;
+    top:1%;
     border:solid;
+    border-radius:0.3%;
+    border-width:0.3%;
 }
-#live-plot{
+#live-html{
+    position:absolute;
+    right:1%;
+    top:1%;
+    bottom:1%;
+    width:48%;
     border:solid;
-    display:block;
-}
-#plot-feed{
-
-}
-#html-output{
-    width:95%;
-    display:block;
-    margin:auto;
-    border:solid;
-    margin-bottom:1em;
-    margin-top:1em;
-    
-}
-#dirt-out img{
-    max-width:97%;
-    display:block;
-    margin:auto;
-}
-h1,h2,h3{
-    font-family:Arial;
-    text-align:center;
+    border-radius:0.3%;
+    border-width:0.3%;
 }
