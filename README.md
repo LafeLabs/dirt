@@ -1,8 +1,8 @@
-# Dirt
+# README.md
 
-## dirt.html
+# dirt.html
 
-```
+```html
 <!doctype html>
 <html lang="en">
 <head>
@@ -20,11 +20,16 @@
 </div>
 </body>
 </html>
+
+
+    
+    
+
 ```
 
-## dirt.css
+# dirt.css
 
-```
+```css
 main{
     position:absolute;
     left:1%;
@@ -46,9 +51,9 @@ main{
 
 ```
 
-## dirt.js
+# dirt.js
 
-```
+```javascript
 p5jsData = {
     "glyph":[],
     "audio_spectrum":[],
@@ -140,7 +145,7 @@ inLine = false;
 function draw(){
     p5jsData.audio_spectrum = fft.analyze();
     nyquistFreq = sampleRate() / 2;
-    binFreq = nyquistFreq / (p5jsData.audio_spectrum.length);
+    p5jsData.spectrum_bin_frequency = nyquistFreq / (p5jsData.audio_spectrum.length);
     fill(255);
     noStroke();     
     rect(0, height - 100, width, height); 
@@ -193,8 +198,6 @@ function draw(){
         socket.send(JSON.stringify(p5jsData));
     }
     
-    p5jsData.keystroke = "";
-    p5jsData.left_click = false;
 }
 
 function mouseWheel(event) {
@@ -213,11 +216,17 @@ function keyPressed() {
         p5jsData.keystroke = key;
     }
 }
+
+function mouseClicked() {
+  // Code to run.
+  p5jsData.mouse.left_click = !p5jsData.mouse.left_click;
+}
+
 ```
 
-## dirt.py
+# dirt.py
 
-```
+```python
 import asyncio
 import json
 import websockets
@@ -255,7 +264,18 @@ async def handle_connection(websocket):
             
             plt.xlim(0, 1023)
             plt.ylim(0, 1023)
+            p5js_data["mouse"]["x"] = np.round(p5js_data["mouse"]["x"])
+            p5js_data["mouse"]["y"] = np.round(p5js_data["mouse"]["y"])
+
+            plt.text(10,50,f'key = {p5js_data["keystroke"]}')
+            plt.text(10,100,f'mouse x = {p5js_data["mouse"]["x"]}')
+            plt.text(10,150,f'mouse y = {p5js_data["mouse"]["y"]}')
+            plt.text(10,200,f'mouse wheel = {p5js_data["mouse"]["wheel"]}')
+            peak_audio_frequency = np.argmax(p5js_data["audio_spectrum"])*p5js_data["spectrum_bin_frequency"]
+            plt.text(10,250,f'peak frequency = {peak_audio_frequency} Hz')
             
+#            plt.text(10,200,f'mouse wheel = {p5js_data["mouse"]["wheel"]}')
+
             # Match p5.js coordinates and remove chart borders
             plt.gca().invert_yaxis() 
             plt.axis('off')          
@@ -285,9 +305,9 @@ if __name__ == "__main__":
 
 ```
 
-## dirt.bat
+# dirt.bat
 
-```
+```batch
 @echo off
 echo [DEBUG 1] Switching folders...
 cd /d "C:\xampp\htdocs\dirt"
@@ -296,14 +316,15 @@ call "%USERPROFILE%\anaconda3\Scripts\activate.bat" "%USERPROFILE%\anaconda3"
 echo [DEBUG 2] running python
 python dirt.py
 pause
-```
-
-## dirt.php
 
 ```
+
+# dirt.php
+
+```php
 <?php
 
-$dirtJSONurl = "https://dirt-swarm.art/dirt.json";
+$dirtJSONurl = "https://raw.githubusercontent.com/LafeLabs/dirt/refs/heads/main/dirt.json";
 $json_raw = file_get_contents($dirtJSONurl);
 $dirtJSON = json_decode($json_raw);
 
@@ -328,12 +349,14 @@ a{
     color:blue;
 }
 </style>
+
 ```
 
 # dirt.json
 
-```
+```json
 [
     "dirt.md","dirt.html","dirt.css","dirt.js","dirt.py","dirt.bat","dirt.php","dirt.json"
 ]
 ```
+
