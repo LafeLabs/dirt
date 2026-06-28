@@ -3,9 +3,8 @@ import json
 import websockets
 import io
 import base64
-import numpy as np
 
-# Force Matplotlib to stay in the background without opening window GUIs
+import numpy as np
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
@@ -16,23 +15,18 @@ async def handle_connection(websocket):
         while True:
             p5js_data_raw = await websocket.recv()
             p5js_data = json.loads(p5js_data_raw)
-            
-            # Use exactly one figure slot in memory to prevent thread clipping
             plt.figure(1, figsize=(6, 6))
-            plt.clf() 
-            
+            plt.clf()
             for stroke in p5js_data.get('glyph', []):
                 if not stroke:
                     continue
                 xdata = [point['x'] for point in stroke]
                 ydata = [point['y'] for point in stroke]
                 
-                # Apply random jitter arrays
                 xdata += 8 * np.random.randn(len(xdata))
                 ydata += 8 * np.random.randn(len(ydata))
                 
                 plt.plot(xdata, ydata, color='black', linewidth=10, solid_capstyle='round')
-            
             plt.xlim(0, 1023)
             plt.ylim(0, 1023)
             p5js_data["mouse"]["x"] = np.round(p5js_data["mouse"]["x"])
@@ -44,15 +38,9 @@ async def handle_connection(websocket):
             plt.text(10,200,f'mouse wheel = {p5js_data["mouse"]["wheel"]}')
             peak_audio_frequency = np.argmax(p5js_data["audio_spectrum"])*p5js_data["spectrum_bin_frequency"]
             plt.text(10,250,f'peak frequency = {peak_audio_frequency} Hz')
-            
-#            plt.text(10,200,f'mouse wheel = {p5js_data["mouse"]["wheel"]}')
-
-            # Match p5.js coordinates and remove chart borders
             plt.gca().invert_yaxis() 
             plt.axis('off')          
             plt.tight_layout(pad=0)
-            
-            # Save to memory bytes
             img_buf = io.BytesIO()
             plt.savefig(img_buf, format='png', bbox_inches='tight', pad_inches=0)
             img_buf.seek(0)
@@ -60,10 +48,7 @@ async def handle_connection(websocket):
             b64_string = base64.b64encode(img_buf.read()).decode('utf-8')
             imagedata = f"data:image/png;base64,{b64_string}"
             html_response = f'<img src="{imagedata}" style="width:100%; height:auto;">'
-            
-            # Send back the response (unblocks JavaScript)
             await websocket.send(html_response)
-            
     except websockets.exceptions.ConnectionClosed:
         print("[DISCONNECTED] p5.js stopped the stream.")
 

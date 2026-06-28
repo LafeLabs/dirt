@@ -1,45 +1,42 @@
-    <!doctype html>
-    <html lang="en">
-    <head>
-       <meta charset="utf-8">
-    </head>
-    <body>    
-        <a href="index.html">index.html</a>
+<!doctype html>
+<html lang="en">
+<head>
+   <meta charset="utf-8">
+</head>
+<body>    
+    <a href="index.html">index.html</a>
+<?php
+    $files = array(
+        "dirt.html" => "html",
+        "dirt.css"  => "css",
+        "dirt.js"   => "javascript",
+        "dirt.py"   => "python",
+        "dirt.bat"  => "batch",
+        "dirt.php"  => "php",
+        "dirt.json" => "json"
+    );
+
+    $readme = "# dirt\n\n";
+    $readme .= "## human body <--> p5js <--> python\n\n";
+    $readme .= "## self-replicating code swarm\n\n";
+    $readme .= "## [replicator spore](https://raw.githubusercontent.com/LafeLabs/dirt/refs/heads/main/dirt.php)\n\n";
+    foreach ($files as $filename => $lang) {
+        
+        echo "<h2>" . $filename . "</h2>\n";
+        echo '<pre id="' . $lang . '">';
+        echo htmlspecialchars(file_get_contents($filename));
+        echo "</pre>\n";
+
+        $readme .= "## " . $filename . "\n";
+        $readme .= "\n```" . $lang . "\n";
+        $readme .= file_get_contents($filename);
+        $readme .= "\n```\n\n";
+    }
+    $readme .= "\n## [dirt.md](dirt.md)";
+
+    file_put_contents("README.md", $readme);    
+    file_put_contents("dirt.md", $readme);    
     
-        <?php
-        // 1. Define the files and their markdown language types
-        $files = array(
-            "dirt.html" => "html",
-            "dirt.css"  => "css",
-            "dirt.js"   => "javascript",
-            "dirt.py"   => "python",
-            "dirt.bat"  => "batch",
-            "dirt.php"  => "php",
-            "dirt.json" => "json"
-        );
-    
-        // 2. Start the README string
-        $readme = "# README.md\n\n";
-    
-        // 3. Loop through each file
-        foreach ($files as $filename => $lang) {
-            
-            // --- Part A: HTML Browser Output ---
-            echo "<h2>" . $filename . "</h2>\n";
-            echo '<pre id="' . $lang . '">';
-            echo htmlspecialchars(file_get_contents($filename));
-            echo "</pre>\n";
-    
-            // --- Part B: README Generator Output ---
-            $readme .= "# " . $filename . "\n";
-            $readme .= "\n```" . $lang . "\n";
-            $readme .= file_get_contents($filename);
-            $readme .= "\n```\n\n";
-        }
-    
-        // 4. Save the finished README file
-        file_put_contents("README.md", $readme);
-        ?>
-    
-    </body>
-    </html>
+?>
+</body>
+</html>

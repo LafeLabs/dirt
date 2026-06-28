@@ -18,13 +18,8 @@ thispoint = {};
 thispoint.x = 0;
 thispoint.y = 0;
 
-let isFetching = false;  
-
-// Setup the connection
 const socket = new WebSocket("ws://127.0.0.1:8080");
 let serverReady = true;
-
-// FIX 1: Set up the invisible double-buffer images automatically on startup
 let currentImgIndex = 1;
 window.addEventListener('DOMContentLoaded', () => {
     const container = document.getElementById("live-html");
@@ -39,30 +34,22 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 socket.onmessage = function(event) {
-    // Extract the raw base64 URL inside the <img> tag sent from Python
     const parser = new DOMParser();
     const doc = parser.parseFromString(event.data, 'text/html');
     const imgTag = doc.querySelector('img');
     
     if (imgTag) {
         const newSrc = imgTag.getAttribute('src');
-        
-        // Determine which image element is currently hidden in the background
         const nextImgIndex = currentImgIndex === 1 ? 2 : 1;
         const activeImg = document.getElementById(`py-img-${currentImgIndex}`);
         const nextImg = document.getElementById(`py-img-${nextImgIndex}`);
         
         if (nextImg && activeImg) {
-            // Load the new image completely in the background
             nextImg.src = newSrc;
-            
-            // FIX 2: Only swap visibility AFTER the browser has completely processed the new image
             nextImg.onload = function() {
-                nextImg.style.opacity = "1";   // Fade the new image in instantly
-                activeImg.style.opacity = "0";  // Hide the old image seamlessly
-                currentImgIndex = nextImgIndex; // Swap roles for the next frame
-                
-                // Open the gate for the next p5.js frame calculation
+                nextImg.style.opacity = "1";
+                activeImg.style.opacity = "0";
+                currentImgIndex = nextImgIndex;
                 serverReady = true; 
             };
         } else {
@@ -162,6 +149,5 @@ function keyPressed() {
 }
 
 function mouseClicked() {
-  // Code to run.
   p5jsData.mouse.left_click = !p5jsData.mouse.left_click;
 }
