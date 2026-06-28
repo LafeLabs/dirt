@@ -8,6 +8,7 @@ import numpy as np
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+plt.figure(1, figsize=(6, 6))
 
 async def handle_connection(websocket):
     print("[CONNECTED] Python is standing by for p5.js requests.")
@@ -15,7 +16,6 @@ async def handle_connection(websocket):
         while True:
             p5js_data_raw = await websocket.recv()
             p5js_data = json.loads(p5js_data_raw)
-            plt.figure(1, figsize=(6, 6))
             plt.clf()
             for stroke in p5js_data.get('glyph', []):
                 if not stroke:
