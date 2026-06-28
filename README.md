@@ -1,6 +1,6 @@
 # dirt
 
-## human body <--> p5js <--> python
+## human body &harr; p5js &harr; python
 
 ## self-replicating code swarm
 

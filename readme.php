@@ -17,7 +17,7 @@
     );
 
     $readme = "# dirt\n\n";
-    $readme .= "## human body <--> p5js <--> python\n\n";
+    $readme .= "## human body &harr; p5js &harr; python\n\n";
     $readme .= "## self-replicating code swarm\n\n";
     $readme .= "## [replicator spore](https://raw.githubusercontent.com/LafeLabs/dirt/refs/heads/main/dirt.php)\n\n";
     foreach ($files as $filename => $lang) {
