@@ -3,12 +3,15 @@ $spore = "https://raw.githubusercontent.com/LafeLabs/dirt/refs/heads/main/dirt.p
 $baseurl = explode("dirt.php",$spore)[0];
 
 @copy($baseurl."index.html","index.html");
-@copy($baseurl."README.md","README.md");
 @copy($baseurl."edit-files.html","edit-files.html");
+@copy($baseurl."readme.html","readme.html");
 @copy($baseurl."save-file.php","save-file.php");
 @copy($baseurl."save-file-get.php","save-file-get.php");
 @copy($baseurl."load-file.php","load-file.php");
-@copy($baseurl."list-files.html","list-files.php");
+@copy($baseurl."list-files.php","list-files.php");
+@copy($baseurl."readme.php","readme.php");
+@copy($baseurl."README.md","README.md");
+
 
 $fileExtensions = ["html", "css", "js", "py", "bat", "md", "php", "json"];
 foreach ($fileExtensions as $extension) {
