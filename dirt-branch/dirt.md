@@ -295,18 +295,20 @@ pause
 
 ```php
 <?php
-$spore = "https://raw.githubusercontent.com/LafeLabs/dirt/refs/heads/main/dirt.php";
-$baseurl = explode("dirt.php",$spore)[0];
-$fileExtensions = ["html", "css", "js", "py", "bat", "md", "php", "json"];
-foreach ($fileExtensions as $extension) {
-    @copy($baseurl."dirt.".$extension,"dirt.".$extension);
+
+$dirtJSONurl = "https://raw.githubusercontent.com/LafeLabs/dirt/refs/heads/main/dirt.json";
+$json_raw = file_get_contents($dirtJSONurl);
+$dirtJSON = json_decode($json_raw);
+
+mkdir("data");
+mkdir("plots");
+
+$baseurl = explode("dirt.json",$dirtJSONurl)[0];
+
+foreach($file_set as $value){
+    copy($baseurl.$value,$value);
 }
-if (!is_dir("data")) {
-    mkdir("data");
-}
-if (!is_dir("plots")) {
-    mkdir("plots");
-}
+
 ?>
 <a href = "dirt.html">dirt.html</a>
 <style>
@@ -319,14 +321,15 @@ a{
     color:blue;
 }
 </style>
+
 ```
 
 ## dirt.json
 
 ```json
-{
-    "spore":"https://raw.githubusercontent.com/LafeLabs/dirt/refs/heads/main/dirt.php"
-}
+[
+    "dirt.md","dirt.html","dirt.css","dirt.js","dirt.py","dirt.bat","dirt.php","dirt.json"
+]
 ```
 
 
