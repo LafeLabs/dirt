@@ -4,7 +4,7 @@
 
 ## self-replicating code swarm
 
-## [replicator spore](https://raw.githubusercontent.com/LafeLabs/dirt/refs/heads/main/dirt.php)
+## [replicator spore](https://raw.githubusercontent.com/LafeLabs/dirt/refs/heads/main/dirt.php?download=)
 
 ## dirt.html
 
