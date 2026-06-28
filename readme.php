@@ -19,10 +19,7 @@
     $readme = "# dirt\n\n";
     $readme .= "## human body &harr; p5js &harr; python\n\n";
     $readme .= "## self-replicating code swarm\n\n";
-    
-    $downloadLinkHTML = "<a href=\"https://raw.githubusercontent.com/LafeLabs/dirt/refs/heads/main/dirt.php\" download=\"dirt.php\">download replicator spore dirt.php</a>";
-
-    $readme .= "## ".$downloadLinkHTML."\n\n";
+    $readme .= "## [replicator spore dirt.php](https://github.com/LafeLabs/dirt/blob/main/dirt.php)\n\n";
     foreach ($files as $filename => $lang) {
         
         echo "<h2>" . $filename . "</h2>\n";

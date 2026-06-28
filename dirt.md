@@ -4,7 +4,7 @@
 
 ## self-replicating code swarm
 
-## <a href="https://raw.githubusercontent.com/LafeLabs/dirt/refs/heads/main/dirt.php" download="dirt.php">download replicator spore dirt.php</a>
+## <a href="https://github.com/LafeLabs/dirt/raw/main/dirt.php" download="dirt.php">download replicator spore dirt.php</a>
 
 ## dirt.html
 
