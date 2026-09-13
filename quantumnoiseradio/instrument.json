@@ -1,0 +1,63 @@
+{
+    "noise_source":{
+        "dc_bias":0.0,
+        "ac_audio_vpp":0.0,
+        "ac_audio_frequency":1000.0
+    },
+    "qubit_flux_bias":{
+        "dc_bias":0.0,
+        "ac_audio_vpp":0.0,
+        "ac_audio_frequency":1000.0
+    },
+    "radio_pump":{
+        "power":-25.00,
+        "frequency":5.5e9
+    },
+    "radio_probe":{
+        "power":-55.00,
+        "frequency":5.501e9
+    },
+    "knobs":{
+        "rows":[
+        [0,0,0],
+        [0,0,0],
+        [0,0,0]
+        ]
+    },
+    "mode":"audio_out",
+    "modes":[
+        "qubit_flux_bias",
+        "noise_bias",
+        "audio_out",
+        "radio_pump",
+        "radio_probe",
+        "spectrum_control",
+        "radio_spectrum",
+        "spectrum",
+        "noise_modes"
+    ],
+    "buttons":{
+        "rows":[
+            ["QUBIT FLUX","NOISE BIAS","AUDIO OUT"],
+            ["RADIO PUMP","RADIO PROBE","SPECTRUM CONTROL"],
+            ["RADIO SPECTRUM", "AUDIO SPECTRUM","NOISE MODES"]
+        ]
+    },
+    "audio_spectrum":{
+        "start_frequency":0,
+        "stop_frequency":5000,
+        "grid_lines":[
+            1000,
+            2000,
+            3000,
+            4000
+            ]
+    },
+    "sdr":{
+        "microphone":true,
+        "center_radio_frequency":5.5e9,
+        "radio_bandwidth":1e7,
+        "audio_lowpass_filter":100.0,
+        "audio_highpass_filter":5000.0
+    }
+}
