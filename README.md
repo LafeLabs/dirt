@@ -1,9 +1,22 @@
 # [dirt](https://github.com/lafelabs/dirt/)
 
-## human body &harr; [p5js](https://p5js.org/) &harr; [python](https://www.python.org/)
 
- - [dirt.html](dirt.html)
- - [dirt.css](dirt.css)
- - [dirt.js](dirt.js)
- - [dirt.py](dirt.py)
- - [dirt.bat](dirt.bat)
+## 1. Acquire the dirt spore
+
+Download [dirtspore.py](dirtspore.py) or use curl:
+
+```
+curl -o dirtspore.py https://raw.githubusercontent.com/LafeLabs/dirt/refs/heads/main/dirtspore.py
+```
+
+## 2. Run the dirt spore
+
+```
+python dirtspore.py
+```
+
+## 3. Run Dirt
+
+```
+python dirt.py
+```
