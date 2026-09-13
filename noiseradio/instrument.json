@@ -1,0 +1,10 @@
+{
+    "noise_source":{},
+    "qubit_flux_bias":{},
+    "radio_pump":{},
+    "radio_probe":{},
+    "knobs":{},
+    "buttons":{},
+    "sdr":{},
+    "spectrum":{}
+}
