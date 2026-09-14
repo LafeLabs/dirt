@@ -23,7 +23,8 @@ var numSamples = 1024;
 // Array of amplitude values (-1 to +1) over time.
 var samples = [];
 var currentSource = "mic";
-oscon= false;
+oscon = false;
+
 
 function preload() {
 
@@ -141,6 +142,12 @@ function setup() {
         }
     ]
     ];
+  mic = new p5.AudioIn();
+  mic.start();
+  //analyzer.setInput(mic);
+    
+  fft = new p5.FFT();
+  fft.setInput(mic);
     
 
 }
@@ -156,9 +163,9 @@ function draw() {
     line(width/2,0,width/2,height);
     stroke(0);
 
-//    line(mouseX,0,mouseX,height);    
-  //  line(0,mouseY,width,mouseY);
-    line(0,unit,width,unit);
+  //  line(mouseX,0,mouseX,height);    
+//    line(0,mouseY,width,mouseY);
+    line(width/2,unit,width,unit);
     
     textSize(18);
     knobIndex = -1;//always -1 when mouse not in knob
@@ -192,7 +199,7 @@ function draw() {
             else{
                 fill(255);
             }
-            rect(buttons[rowIndex][columnIndex].x,buttons[rowIndex][columnIndex].y,button_width,button_height);
+            rect(buttons[rowIndex][columnIndex].x,buttons[rowIndex][columnIndex].y,button_width,button_height,5);
             strokeWeight(1);
             fill(0);
             text(qnr.buttons[rowIndex][columnIndex],buttons[rowIndex][columnIndex].x +  5,buttons[rowIndex][columnIndex].y + 28);
@@ -222,8 +229,36 @@ function draw() {
     stroke(0);
     fill(0);
     text(qnr.display_mode,width/2  + 10,15);
+    spectrum = fft.analyze();
+    nyquistFreq = sampleRate() / 2;
+    binFreq = nyquistFreq / (spectrum.length);
 
+    beginShape();
+    vertex(width/2,height);
+    stroke(0);
+    strokeWeight(1);
+    noFill();
+    //frequency = binFreq*i
+    //
+    startIndex = Math.round(qnr.audio_spectrum.start_frequency/binFreq)
+    stopIndex = Math.round(qnr.audio_spectrum.stop_frequency/binFreq)
     
+    for (let i = 0; i < spectrum.length; i++) {
+        vertex(map(i,startIndex,stopIndex,0.5*width,width), map(spectrum[i], 0, 255, height,height - bottom_height));
+    }
+    vertex(width,height);
+    endShape();
+    
+    fill(0);
+    
+    for(let index = 0;index < qnr.audio_spectrum.grid_lines.length;index++){
+
+        lineIndex = Math.round(qnr.audio_spectrum.grid_lines[index]/binFreq);
+        lineX = map(lineIndex,startIndex,stopIndex,0.5*width,width);
+        fkhz = Math.round(qnr.audio_spectrum.grid_lines[index]/1000);
+        line(lineX,height,lineX,height - bottom_height);
+        text(fkhz + " kHz",lineX + 5,height - bottom_height + 20);        
+    }
 }
 
 function mouseWheel(event) {
