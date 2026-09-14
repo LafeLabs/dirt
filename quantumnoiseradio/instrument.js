@@ -4,58 +4,174 @@ if (!debug_mode) {
   socket = new WebSocket('ws://localhost:6502');
 }
 
-knobIndex = -1;
+knobIndex = -1;//always -1 when mouse not in knob
+buttonIndex = -1;//always -1 when mouse not in button
+
+let qnr = {};
+let isLoaded = false;
 
 
-load_file("instrument.json").then(
-    filedata => {
-        qnr = JSON.parse(filedata);
-    }
-);
+function preload() {
 
+    load_file("instrument.json").then(
+        filedata => {
+            qnr = JSON.parse(filedata);
+        }
+    );
+
+}
 
 function setup() {
-     
+
+    load_file("instrument.json").then(filedata => {
+        qnr = JSON.parse(filedata);
+        isLoaded = true;
+    });
+    
     let container = document.getElementById('p5-canvas-container');
     let canvas = createCanvas(innerWidth - 30, innerHeight - 30);
     canvas.parent('p5-canvas-container');
     unit = width/2;
     knob_size = unit/3 - 80;
+    knob_radius = knob_size/2;
     bottom_height = height - unit;    
     button_width = unit/3 - 20;
     button_height = bottom_height/3 - 10;
+
+    knobs = [
+        [
+            {
+                "x":unit/6,
+                "y":unit/6
+            },
+            {
+                "x":unit/2,
+                "y":unit/6
+            },
+            {
+                "x":5*unit/6,
+                "y":unit/6
+            }
+        ],
+        [
+            {
+                "x":unit/6,
+                "y":unit/2
+            },
+            {
+                "x":unit/2,
+                "y":unit/2
+            },
+            {
+                "x":5*unit/6,
+                "y":unit/2
+            }
+        ],
+        [
+            {
+                "x":unit/6,
+                "y":5*unit/6
+            },
+            {
+                "x":unit/2,
+                "y":5*unit/6
+            },
+            {
+                "x":5*unit/6,
+                "y":5*unit/6
+            }
+        ]
+    ];
+
+    buttons = [
+    [
+        {
+            "x":10,
+            "y":height - 3*bottom_height/3 + 5
+        },
+        {
+            "x":unit/3 + 10,
+            "y":height - 3*bottom_height/3 + 5
+        },
+        {
+            "x":2*unit/3 + 10,
+            "y":height - 3*bottom_height/3 + 5
+        }
+    ],
+    [
+        {
+            "x":10,
+            "y":height - 2*bottom_height/3 + 5
+        },
+        {
+            "x":unit/3 + 10,
+            "y":height - 2*bottom_height/3 + 5
+        },
+        {
+            "x":2*unit/3 + 10,
+            "y":height - 2*bottom_height/3 + 5
+        }
+    ],
+    [
+        {
+            "x":10,
+            "y":height - 1*bottom_height/3 + 5
+        },
+        {
+            "x":unit/3 + 10,
+            "y":height - 1*bottom_height/3 + 5
+        },
+        {
+            "x":2*unit/3 + 10,
+            "y":height - 1*bottom_height/3 + 5
+        }
+    ]
+    ];
+    
+
 }
 
 function draw() {
+    if (!isLoaded) {
+        background(0);
+        return;
+    }
     clear();
+    strokeWeight(1);
+
     line(width/2,0,width/2,height);
     stroke(0);
-    
+
 //    line(mouseX,0,mouseX,height);    
   //  line(0,mouseY,width,mouseY);
     line(0,unit,width,unit);
-    rect(10,height - bottom_height/3 + 5,button_width,button_height);
-    rect(10,height - 2*bottom_height/3 + 5,button_width,button_height);
-    rect(10,height - 3*bottom_height/3 + 5,button_width,button_height);
-
-    rect(unit/3 + 10,height - bottom_height/3 + 5,button_width,button_height);
-    rect(unit/3 + 10,height - 2*bottom_height/3 + 5,button_width,button_height);
-    rect(unit/3 + 10,height - 3*bottom_height/3 + 5,button_width,button_height);
-
-    rect(2*unit/3 + 10,height - bottom_height/3 + 5,button_width,button_height);
-    rect(2*unit/3 + 10,height - 2*bottom_height/3 + 5,button_width,button_height);
-    rect(2*unit/3+10,height - 3*bottom_height/3 + 5,button_width,button_height);
     
-    circle(unit/6,unit/6,knob_size);
-    circle(unit/2,unit/6,knob_size);
-    circle(5*unit/6,unit/6,knob_size);
-    circle(unit/6,unit/2,knob_size);
-    circle(unit/2,unit/2,knob_size);
-    circle(5*unit/6,unit/2,knob_size);
-    circle(unit/6,5*unit/6,knob_size);
-    circle(unit/2,5*unit/6,knob_size);
-    circle(5*unit/6,5*unit/6,knob_size);
-
+    textSize(18);
+    for(let rowIndex = 0;rowIndex < 3;rowIndex++){
+        for(let columnIndex = 0;columnIndex < 3;columnIndex++){
+            strokeWeight(5);
+            knob_distance = Math.sqrt( (knobs[rowIndex][columnIndex].x - mouseX)**2  + (knobs[rowIndex][columnIndex].y - mouseY)**2);
+            if(knob_distance < knob_radius){
+                fill("#00ff0080");
+            }
+            else{
+                fill(255);
+            }
+            circle(knobs[rowIndex][columnIndex].x,knobs[rowIndex][columnIndex].y,knob_size);
+            
+            if(mouseX > buttons[rowIndex][columnIndex].x && mouseX < buttons[rowIndex][columnIndex].x + button_width && mouseY > buttons[rowIndex][columnIndex].y && mouseY < buttons[rowIndex][columnIndex].y + button_height){
+                fill("#00ff0080");
+            }
+            else{
+                fill(255);
+            }
+            rect(buttons[rowIndex][columnIndex].x,buttons[rowIndex][columnIndex].y,button_width,button_height);
+            strokeWeight(1);
+            fill(0);
+            text(qnr.buttons[rowIndex][columnIndex],buttons[rowIndex][columnIndex].x +  5,buttons[rowIndex][columnIndex].y + 28);
+        }
+    }
+    text(qnr.knob_mode,10,10);
 }
 
 function mouseWheel(event) {

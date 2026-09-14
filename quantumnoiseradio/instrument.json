@@ -22,7 +22,8 @@
         [0,0,0],
         [0,0,0]
         ],
-    "mode":"audio_out",
+    "knob_mode":"audio_out",
+    "display_mode":"audio_spectrum",
     "modes":[
         "qubit_flux_bias",
         "noise_bias",
@@ -31,16 +32,14 @@
         "radio_probe",
         "spectrum_control",
         "radio_spectrum",
-        "spectrum",
+        "audio_spectrum",
         "noise_modes"
     ],
-    "buttons":{
-        "rows":[
-            ["QUBIT FLUX","NOISE BIAS","AUDIO OUT"],
-            ["RADIO PUMP","RADIO PROBE","SPECTRUM CONTROL"],
-            ["RADIO SPECTRUM", "AUDIO SPECTRUM","NOISE MODES"]
-        ]
-    },
+    "buttons":[
+        ["QUBIT FLUX","NOISE BIAS","AUDIO OUT"],
+        ["RADIO PUMP","RADIO PROBE","SPECTRUM CONTROL"],
+        ["RADIO SPECTRUM", "AUDIO SPECTRUM","NOISE MODES"]
+    ],
     "audio_spectrum":{
         "start_frequency":0,
         "stop_frequency":5000,
