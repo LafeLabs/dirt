@@ -256,7 +256,7 @@ function draw() {
         lineIndex = Math.round(qnr.audio_spectrum.grid_lines[index]/binFreq);
         lineX = map(lineIndex,startIndex,stopIndex,0.5*width,width);
         fkhz = Math.round(qnr.audio_spectrum.grid_lines[index]/1000);
-        line(lineX,height,lineX,height - bottom_height);
+        line(lineX,height,lineX,0);
         text(fkhz + " kHz",lineX + 5,height - bottom_height + 20);        
     }
 }

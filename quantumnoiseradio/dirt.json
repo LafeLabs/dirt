@@ -1,10 +1,14 @@
 {
-    "spore":"https://raw.githubusercontent.com/LafeLabs/dirt/refs/heads/main/dirt.json",
+    "spore":"https://raw.githubusercontent.com/LafeLabs/dirt/refs/heads/main/quantumnoiseradio/dirt.json",
     "files":[
         "dirt.py",
         "dirt.html",
         "dirt.json",
         "dirt.js",
+        "instrument.js",
+        "instrument.py",
+        "instrument.json",
+        "instrument.html",
         "README.md"
     ]
 }

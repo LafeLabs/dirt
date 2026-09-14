@@ -2,7 +2,7 @@
 import json
 import urllib.request
 
-dirtspore_url = 'https://raw.githubusercontent.com/LafeLabs/dirt/refs/heads/main/dirt.json'
+dirtspore_url = 'https://raw.githubusercontent.com/LafeLabs/dirt/refs/heads/main/quantumnoiseradio/dirt.json'
 
 try:
     with urllib.request.urlopen(dirtspore_url) as response:
