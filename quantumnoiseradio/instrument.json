@@ -17,13 +17,11 @@
         "power":-55.00,
         "frequency":5.501e9
     },
-    "knobs":{
-        "rows":[
+    "knobs":[
         [0,0,0],
         [0,0,0],
         [0,0,0]
-        ]
-    },
+        ],
     "mode":"audio_out",
     "modes":[
         "qubit_flux_bias",
