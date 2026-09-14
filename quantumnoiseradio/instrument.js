@@ -25,6 +25,8 @@ var samples = [];
 var currentSource = "mic";
 oscon = false;
 
+sweepIndex = 0;
+sweepStep = 3;
 
 function preload() {
 
@@ -157,16 +159,20 @@ function draw() {
         background(0);
         return;
     }
-    clear();
-    strokeWeight(1);
+//    clear();
 
-    line(width/2,0,width/2,height);
+
+    strokeWeight(1);
+    fill(255);
+    stroke(255);
+    rect(unit,height- bottom_height,unit,bottom_height);
+    rect(0,0,unit,unit);
     stroke(0);
+    line(width/2,0,width/2,height);
 
   //  line(mouseX,0,mouseX,height);    
 //    line(0,mouseY,width,mouseY);
     line(width/2,unit,width,unit);
-    
     textSize(18);
     knobIndex = -1;//always -1 when mouse not in knob
     buttonIndex = -1;//always -1 when mouse not in button
@@ -248,7 +254,8 @@ function draw() {
     }
     vertex(width,height);
     endShape();
-    
+
+  
     fill(0);
     
     for(let index = 0;index < qnr.audio_spectrum.grid_lines.length;index++){
@@ -257,7 +264,19 @@ function draw() {
         lineX = map(lineIndex,startIndex,stopIndex,0.5*width,width);
         fkhz = Math.round(qnr.audio_spectrum.grid_lines[index]/1000);
         line(lineX,height,lineX,0);
-        text(fkhz + " kHz",lineX + 5,height - bottom_height + 20);        
+        text(fkhz + " kHz",lineX + 5,height - bottom_height + 20); 
+        
+    }
+    
+    strokeWeight(6);
+    for (let i = 0; i < spectrum.length; i++) {
+        stroke(255-spectrum[i]);
+        point(map(i,startIndex,stopIndex,0.5*width,width),unit - sweepIndex);
+
+    } 
+    sweepIndex += sweepStep;
+    if(sweepIndex > unit){
+        sweepIndex = 0;
     }
 }
 
