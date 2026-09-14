@@ -7,6 +7,8 @@ if (!debug_mode) {
 knobIndex = -1;//always -1 when mouse not in knob
 buttonIndex = -1;//always -1 when mouse not in button
 
+knobClicks = 24;
+
 let qnr = {};
 let isLoaded = false;
 
@@ -152,21 +154,26 @@ function draw() {
 
     for(let rowIndex = 0;rowIndex < 3;rowIndex++){
         for(let columnIndex = 0;columnIndex < 3;columnIndex++){
-            strokeWeight(5);
             knob_distance = Math.sqrt( (knobs[rowIndex][columnIndex].x - mouseX)**2  + (knobs[rowIndex][columnIndex].y - mouseY)**2);
+
             if(knob_distance < knob_radius){
-                fill("#00ff0080");
                 knobIndex = rowIndex*3 + columnIndex;
-              //  fill(0);
-//                text(knobIndex.toString(),10,35);
+                fill(0);
+                strokeWeight(1);
+                text(qnr.knobs[rowIndex][columnIndex].toString(),knobs[rowIndex][columnIndex].x + 10,knobs[rowIndex][columnIndex].y);    
+                fill("#00ff0080");
+
             }
             else{
                 fill(255);
             }
+            strokeWeight(5);
+            
             circle(knobs[rowIndex][columnIndex].x,knobs[rowIndex][columnIndex].y,knob_size);
+            line(knobs[rowIndex][columnIndex].x,knobs[rowIndex][columnIndex].y,knobs[rowIndex][columnIndex].x + knob_radius*Math.sin(2*Math.PI*qnr.knobs[rowIndex][columnIndex]/knobClicks),knobs[rowIndex][columnIndex].y - knob_radius*Math.cos(2*Math.PI*qnr.knobs[rowIndex][columnIndex]/knobClicks));
             fill(0);
             strokeWeight(1);
-            text(qnr.knobs[rowIndex][columnIndex].toString(),knobs[rowIndex][columnIndex].x + 10,knobs[rowIndex][columnIndex].y);
+            
             if(mouseX > buttons[rowIndex][columnIndex].x && mouseX < buttons[rowIndex][columnIndex].x + button_width && mouseY > buttons[rowIndex][columnIndex].y && mouseY < buttons[rowIndex][columnIndex].y + button_height){
                 fill("#00ff0080");
             }
@@ -189,10 +196,10 @@ function draw() {
 function mouseWheel(event) {
     if(knobIndex >= 0){
         if(event.delta < 0){ 
-
+            qnr.knobs[Math.floor(knobIndex/3)][knobIndex%3]++;
         }
         else{
-
+            qnr.knobs[Math.floor(knobIndex/3)][knobIndex%3]--;
         }
 
     }
