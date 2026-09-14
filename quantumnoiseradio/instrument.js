@@ -11,13 +11,15 @@ knobClicks = 24;
 
 let qnr = {};
 let isLoaded = false;
+audio_on = false;
 
+    
 audio_frequency_A = 220;
 audio_frequency_B = 440;
 audio_amplitude_A = 0.5;
 audio_amplitude_B = 0.5;
 
-var soundFile, mic, osc,fft;
+var soundFile, mic, osc,fft,audio_A,audio_B;
 var analyzer;
 var numSamples = 1024;
 // Array of amplitude values (-1 to +1) over time.
@@ -150,23 +152,38 @@ function setup() {
     
   fft = new p5.FFT();
   fft.setInput(mic);
-    
+   
+  background(255);
+
+  audio_A = new p5.SinOsc(); // set frequency and type
+//  osc.start();
+  audio_B = new p5.SinOsc(); // set frequency and type
+//  osc.amp(maxv);
+  //osc.start();
+
 
 }
 
 function draw() {
+
     if (!isLoaded) {
         background(0);
         return;
     }
 //    clear();
-
+    if(audio_on == true){
+        audio_A.freq(audio_frequency_A);
+        audio_B.freq(audio_frequency_B);
+        audio_A.amp(audio_amplitude_A);
+        audio_B.amp(audio_amplitude_B);
+    
+    }
 
     strokeWeight(1);
     fill(255);
     stroke(255);
     rect(unit,height- bottom_height,unit,bottom_height);
-    rect(0,0,unit,unit);
+    rect(0,0,unit,height);
     stroke(0);
     line(width/2,0,width/2,height);
 
@@ -201,6 +218,7 @@ function draw() {
             
             if(mouseX > buttons[rowIndex][columnIndex].x && mouseX < buttons[rowIndex][columnIndex].x + button_width && mouseY > buttons[rowIndex][columnIndex].y && mouseY < buttons[rowIndex][columnIndex].y + button_height){
                 fill("#00ff0080");
+                buttonIndex = 3*rowIndex + columnIndex;
             }
             else{
                 fill(255);
@@ -215,6 +233,22 @@ function draw() {
     text(qnr.knob_mode,10,15);
     
     if(qnr.knob_mode == "audio_out"){
+        
+        audio_amplitude_A = Math.round((qnr.audio_out.amplitude_A + 0.01*qnr.knobs[2][0])*100)/100;
+        audio_amplitude_B = Math.round((qnr.audio_out.amplitude_B + 0.01*qnr.knobs[2][2])*100)/100;        
+        
+        if(audio_amplitude_A < 0){
+            audio_amplitude_A = 0;
+        }
+        if(audio_amplitude_A > 1.0){
+            audio_amplitude_A = 1.0;
+        }
+        if(audio_amplitude_B < 0){
+            audio_amplitude_B = 0;
+        }
+        if(audio_amplitude_B > 1.0){
+            audio_amplitude_B = 1.0;
+        }
         
         audio_frequency_A = qnr.audio_out.frequency_A + 100*qnr.knobs[0][0] + 10*qnr.knobs[0][1] + qnr.knobs[0][2];
         audio_frequency_B = qnr.audio_out.frequency_B + 100*qnr.knobs[1][0] + 10*qnr.knobs[1][1] + qnr.knobs[1][2];        
@@ -298,4 +332,22 @@ function sendData(instrumentData) {
   } else {
     console.log("Debug Mode (No Socket Connection):", instrumentData);
   }
+}
+
+function mouseClicked() {
+
+  if(buttonIndex == 8){
+      if(!audio_on){
+          audio_A.start();
+          audio_B.start();
+          
+      }
+      else{
+          audio_A.stop();
+          audio_B.stop();
+      }
+      audio_on = !audio_on;
+      
+  }
+    
 }

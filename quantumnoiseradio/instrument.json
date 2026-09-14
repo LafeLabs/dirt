@@ -43,8 +43,8 @@
     ],
     "buttons":[
         ["QUBIT FLUX","NOISE BIAS","AUDIO OUT"],
-        ["RADIO PUMP","RADIO PROBE","SPECTRUM CONTROL"],
-        ["RADIO SPECTRUM", "AUDIO SPECTRUM","NOISE MODES"]
+        ["RADIO PUMP","RADIO PROBE","RADIO ON/OFF"],
+        ["RADIO SPECTRUM", "AUDIO SPECTRUM","AUDIO ON/OFF"]
     ],
     "audio_spectrum":{
         "start_frequency":0,
