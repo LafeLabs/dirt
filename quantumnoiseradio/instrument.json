@@ -9,6 +9,12 @@
         "ac_audio_vpp":0.0,
         "ac_audio_frequency":1000.0
     },
+    "audio_out":{
+        "frequency_A":220,
+        "frequency_B":440,
+        "amplitude_A":0.5,
+        "amplitude_B":0.5
+    },
     "radio_pump":{
         "power":-25.00,
         "frequency":5.5e9

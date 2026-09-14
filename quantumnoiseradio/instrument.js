@@ -12,6 +12,18 @@ knobClicks = 24;
 let qnr = {};
 let isLoaded = false;
 
+audio_frequency_A = 220;
+audio_frequency_B = 440;
+audio_amplitude_A = 0.5;
+audio_amplitude_B = 0.5;
+
+var soundFile, mic, osc,fft;
+var analyzer;
+var numSamples = 1024;
+// Array of amplitude values (-1 to +1) over time.
+var samples = [];
+var currentSource = "mic";
+oscon= false;
 
 function preload() {
 
@@ -188,6 +200,27 @@ function draw() {
     }
     fill(0);
     text(qnr.knob_mode,10,15);
+    
+    if(qnr.knob_mode == "audio_out"){
+        
+        audio_frequency_A = qnr.audio_out.frequency_A + 100*qnr.knobs[0][0] + 10*qnr.knobs[0][1] + qnr.knobs[0][2];
+        audio_frequency_B = qnr.audio_out.frequency_B + 100*qnr.knobs[1][0] + 10*qnr.knobs[1][1] + qnr.knobs[1][2];        
+        
+        audio_frequency_B = qnr.audio_out.frequency_B + 100*qnr.knobs[1][0] + 10*qnr.knobs[1][1] + qnr.knobs[1][2];        
+        
+        text("frequency_A = "  + audio_frequency_A.toString() + " Hz",10,32);
+        text("frequency_B = "  + audio_frequency_B.toString() + " Hz",10,unit/2 - knob_radius - 32);
+        
+        text("Amplitude A = "  + audio_amplitude_A.toString(),50,5*unit/6 - knob_radius - 32);
+        text("Amplitude B = "  + audio_amplitude_B.toString(),50 + 2*unit/3,5*unit/6 - knob_radius - 32);    
+        
+        fill(255);
+        stroke(255);
+        circle(knobs[2][1].x,knobs[2][1].y,knob_size + 10);
+    }
+    
+    stroke(0);
+    fill(0);
     text(qnr.display_mode,width/2  + 10,15);
 
     
