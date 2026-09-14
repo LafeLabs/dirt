@@ -147,18 +147,26 @@ function draw() {
     line(0,unit,width,unit);
     
     textSize(18);
+    knobIndex = -1;//always -1 when mouse not in knob
+    buttonIndex = -1;//always -1 when mouse not in button
+
     for(let rowIndex = 0;rowIndex < 3;rowIndex++){
         for(let columnIndex = 0;columnIndex < 3;columnIndex++){
             strokeWeight(5);
             knob_distance = Math.sqrt( (knobs[rowIndex][columnIndex].x - mouseX)**2  + (knobs[rowIndex][columnIndex].y - mouseY)**2);
             if(knob_distance < knob_radius){
                 fill("#00ff0080");
+                knobIndex = rowIndex*3 + columnIndex;
+              //  fill(0);
+//                text(knobIndex.toString(),10,35);
             }
             else{
                 fill(255);
             }
             circle(knobs[rowIndex][columnIndex].x,knobs[rowIndex][columnIndex].y,knob_size);
-            
+            fill(0);
+            strokeWeight(1);
+            text(qnr.knobs[rowIndex][columnIndex].toString(),knobs[rowIndex][columnIndex].x + 10,knobs[rowIndex][columnIndex].y);
             if(mouseX > buttons[rowIndex][columnIndex].x && mouseX < buttons[rowIndex][columnIndex].x + button_width && mouseY > buttons[rowIndex][columnIndex].y && mouseY < buttons[rowIndex][columnIndex].y + button_height){
                 fill("#00ff0080");
             }
@@ -171,7 +179,11 @@ function draw() {
             text(qnr.buttons[rowIndex][columnIndex],buttons[rowIndex][columnIndex].x +  5,buttons[rowIndex][columnIndex].y + 28);
         }
     }
-    text(qnr.knob_mode,10,10);
+    fill(0);
+    text(qnr.knob_mode,10,15);
+    text(qnr.display_mode,width/2  + 10,15);
+
+    
 }
 
 function mouseWheel(event) {
