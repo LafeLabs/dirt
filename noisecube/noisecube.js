@@ -78,9 +78,11 @@ function draw() {
                 fill(255);
             }
             circle(knob_x,knob_y,knob_diameter);
-            line(knob_x,knob_y,knob_x + );
+            line(knob_x,knob_y,knob_x + knob_radius*Math.sin(2*Math.PI*noisecube.controls[controlIndex].knobs[row][col]/knobClicks), knob_y - knob_radius*Math.cos(2*Math.PI*noisecube.controls[controlIndex].knobs[row][col]/knobClicks));
+            
+//            line(knobs[rowIndex][columnIndex].x,knobs[rowIndex][columnIndex].y,knobs[rowIndex][columnIndex].x + knob_radius*Math.sin(2*Math.PI*qnr.knobs[rowIndex][columnIndex]/knobClicks),knobs[rowIndex][columnIndex].y - knob_radius*Math.cos(2*Math.PI*qnr.knobs[rowIndex][columnIndex]/knobClicks));
 
-//noisecube.controls[controlIndex].knobs[Math.floor(knobIndex/3)][knobIndex%3]
+//
 
         }
     }
