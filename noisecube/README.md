@@ -1,4 +1,4 @@
-# [dirt](https://github.com/lafelabs/dirt/)
+# [dirt/noisecube](https://github.com/LafeLabs/dirt/tree/main/noisecube)
 
 
 ## 1. Acquire the dirt spore
@@ -6,7 +6,7 @@
 Download [dirtspore.py](dirtspore.py) or use curl:
 
 ```
-curl -o dirtspore.py https://raw.githubusercontent.com/LafeLabs/dirt/refs/heads/main/dirtspore.py
+curl -o dirtspore.py https://raw.githubusercontent.com/LafeLabs/dirt/refs/heads/main/noisecube/dirtspore.py
 ```
 
 ## 2. Run the dirt spore
@@ -19,4 +19,10 @@ python dirtspore.py
 
 ```
 python dirt.py
+```
+
+## 4. Run noisecube
+
+```
+python noisecube.py
 ```
