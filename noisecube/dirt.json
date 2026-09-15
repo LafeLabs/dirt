@@ -1,0 +1,10 @@
+{
+    "spore":"https://raw.githubusercontent.com/LafeLabs/dirt/refs/heads/main/dirt.json",
+    "files":[
+        "dirt.py",
+        "dirt.html",
+        "dirt.json",
+        "dirt.js",
+        "README.md"
+    ]
+}
