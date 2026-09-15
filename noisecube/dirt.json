@@ -1,10 +1,14 @@
 {
-    "spore":"https://raw.githubusercontent.com/LafeLabs/dirt/refs/heads/main/dirt.json",
+    "spore":"https://raw.githubusercontent.com/LafeLabs/dirt/refs/heads/main/noisecube/dirt.json",
     "files":[
         "dirt.py",
         "dirt.html",
         "dirt.json",
         "dirt.js",
+        "noisecube.js",
+        "noisecube.html",
+        "noisecube.css",
+        "noisecube.py",
         "README.md"
     ]
 }
