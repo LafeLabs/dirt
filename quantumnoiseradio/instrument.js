@@ -1,7 +1,7 @@
 const debug_mode = true;//set to false to send data over socket
 let socket = null;
 if (!debug_mode) {
-  socket = new WebSocket('ws://localhost:6502');
+  socket = new WebSocket('ws://localhost:6502');//this talks to instrument.py, while port 8086 talks to dirt.py
 }
 
 knobIndex = -1;//always -1 when mouse not in knob
@@ -19,6 +19,18 @@ audio_frequency_B = 440;
 audio_amplitude_A = 0.5;
 audio_amplitude_B = 0.5;
 
+noise_source ={
+    "dc_bias":0.0,
+    "ac_audio_vpp":0.0,
+    "ac_audio_frequency":1000.0
+};
+
+qubit_flux = {
+    "dc_bias":0.0,
+    "ac_audio_vpp":0.0,
+    "ac_audio_frequency":1000.0
+};
+    
 var soundFile, mic, osc,fft,audio_A,audio_B;
 var analyzer;
 var numSamples = 1024;
@@ -256,14 +268,48 @@ function draw() {
         audio_frequency_B = qnr.audio_out.frequency_B + 100*qnr.knobs[1][0] + 10*qnr.knobs[1][1] + qnr.knobs[1][2];        
         
         text("frequency_A = "  + audio_frequency_A.toString() + " Hz",10,32);
-        text("frequency_B = "  + audio_frequency_B.toString() + " Hz",10,unit/2 - knob_radius - 32);
+        text("frequency_B = "  + audio_frequency_B.toString() + " Hz",10,unit/2 - knob_radius - 10);
         
-        text("Amplitude A = "  + audio_amplitude_A.toString(),50,5*unit/6 - knob_radius - 32);
-        text("Amplitude B = "  + audio_amplitude_B.toString(),50 + 2*unit/3,5*unit/6 - knob_radius - 32);    
+        text("Amplitude A = "  + audio_amplitude_A.toString(),50,5*unit/6 - knob_radius - 10);
+        text("Amplitude B = "  + audio_amplitude_B.toString(),50 + 2*unit/3,5*unit/6 - knob_radius - 10);    
+        
+        text("100x",unit/6-20,unit/6 + knob_radius+20);
+        text("10x",unit/2-20,unit/6 + knob_radius+20);
+        text("1x",5*unit/6-20,unit/6 + knob_radius+20);
+        text("100x",unit/6-20,unit/2 + knob_radius+20);
+        text("10x",unit/2-20,unit/2 + knob_radius+20);
+        text("1x",5*unit/6-20,unit/2 + knob_radius+20);
+
+        text("0.01x",unit/6-20,5*unit/6 + knob_radius+20);
+//        text("10x",unit/2-20,unit/2 + knob_radius+20);
+        text("0.01x",5*unit/6-20,5*unit/6 + knob_radius+20);
         
         fill(255);
         stroke(255);
         circle(knobs[2][1].x,knobs[2][1].y,knob_size + 10);
+    }
+    if(qnr.knob_mode == "qubit_flux"){
+
+        qubit_flux.dc_bias = qnr.qubit_flux.dc_bias + 0.1*qnr.knobs[0][0] + 0.01*qnr.knobs[0][1] + 0.001*qnr.knobs[0][2];
+        qubit_flux.dc_bias = Math.round(qubit_flux.dc_bias*1000)/1000;
+        
+        text("dc_bias = "  + qubit_flux.dc_bias.toString() + " V",10,32);
+        text("ac_audio_vpp = "  + qubit_flux.ac_audio_vpp.toString() + " V",10,unit/2 - knob_radius - 10);        
+        text("AC Audio Frequency = "  + qubit_flux.ac_audio_frequency.toString() + " Hz",50,5*unit/6 - knob_radius - 10);        
+        
+        text("0.1",unit/6-20,unit/6 + knob_radius+20);
+        text("0.01",unit/2-20,unit/6 + knob_radius+20);
+        text("0.001",5*unit/6-20,unit/6 + knob_radius+20);
+
+        text("0.1",unit/6-20,unit/2 + knob_radius+20);
+        text("0.01",unit/2-20,unit/2 + knob_radius+20);
+        text("0.001",5*unit/6-20,unit/2 + knob_radius+20);
+
+        text("100x",unit/6-20,5*unit/6 + knob_radius+20);
+        text("10x",unit/2-20,5*unit/6 + knob_radius+20);
+        text("1x",5*unit/6-20,5*unit/6 + knob_radius+20);
+        
+        
     }
     
     stroke(0);
@@ -335,7 +381,20 @@ function sendData(instrumentData) {
 }
 
 function mouseClicked() {
+  
+  if(buttonIndex == 0){
+      qnr.knob_mode = "qubit_flux";
+      
+  }
+  if(buttonIndex == 1){
+     qnr.knob_mode = "noise_bias";
 
+  }
+  if(buttonIndex == 2){
+     qnr.knob_mode = "audio_out";
+
+  }
+  
   if(buttonIndex == 8){
       if(!audio_on){
           audio_A.start();

@@ -4,7 +4,7 @@
         "ac_audio_vpp":0.0,
         "ac_audio_frequency":1000.0
     },
-    "qubit_flux_bias":{
+    "qubit_flux":{
         "dc_bias":0.0,
         "ac_audio_vpp":0.0,
         "ac_audio_frequency":1000.0
