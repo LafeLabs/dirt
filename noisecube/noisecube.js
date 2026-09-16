@@ -41,8 +41,8 @@ noisecube.controls = [{
     "quantities":["dc_offset","ac_vpp","ac_frequency"],
     "units":["V","V","Hz"],
     "multipliers":[[0.1,0.01,0.001],[0.1,0.01,0.001],[100,10,1]],
-    "maxima":[1,1,5000],
-    "minima":[-1,-1,100],
+    "max":[1,1,5000],
+    "min":[-1,-1,100],
     "defaults":[0,0,440],
     "values":[0,0,440]
 }];
@@ -110,6 +110,13 @@ function draw() {
         noisecube.controls[0].values[row] += noisecube.controls[0].multipliers[row][1]*noisecube.controls[0].knobs[row][1];
         noisecube.controls[0].values[row] += noisecube.controls[0].multipliers[row][2]*noisecube.controls[0].knobs[row][2];
         noisecube.controls[0].values[row] = Math.round(noisecube.controls[0].values[row]*1000)/1000;
+        
+        if(noisecube.controls[0].values[row] > noisecube.controls[0].max[row]){
+            noisecube.controls[0].values[row] = noisecube.controls[0].max[row];
+        }
+        if(noisecube.controls[0].values[row] < noisecube.controls[0].min[row]){
+            noisecube.controls[0].values[row] = noisecube.controls[0].min[row];
+        }        
         strokeWeight(1);
         fill(0);
         text(noisecube.controls[controlIndex].quantities[row] + " = " + noisecube.controls[0].values[row] + " " + noisecube.controls[controlIndex].units[row],5,knob_origin_y + knob_spacing_y*row - 10 - knob_radius);
