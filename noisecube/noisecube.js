@@ -8,34 +8,6 @@ controlIndex = 0;
 
 noisecube = {};
 
-noisecube.values = {
-    "qubit_flux_bias":{
-        "dc_offset":0,
-        "ac_vpp":0,
-        "ac_frequency":220
-    },
-    "noise_source_bias":{
-        "dc_offset":0,
-        "ac_vpp":0,
-        "ac_frequency":440
-    },
-    "radio_pump":{
-        "power":-30,
-        "frequency":6e9
-    },
-    "radio_probe":{
-        "power":-70,
-        "frequency":5e9
-    },
-    "radio_spectrum":{
-        "center_frequency":5.5e9,
-        "frequency_sweep_width":0.2e9
-    },
-    "audio_spectrum":{
-        "on":true
-    }
-};
-
 noisecube.controls = [{
     "knob_mode":"qubit_flux_bias",
     "knobs":[[0,0,0],[0,0,0],[0,0,0]],
@@ -68,14 +40,14 @@ noisecube.controls = [{
     "values":[-26,6]
 },{
     "knob_mode":"radio_probe",
-    "knobs":[[0,0,0],[0,0,0]],
-    "quantities":["power","frequency"],
-    "units":["dBm","GHz"],
-    "multipliers":[[0.1,0.01,0.001],[0.1,0.01,0.001]],
-    "max":[0,9],
-    "min":[-60,4],
-    "defaults":[-26,5.5],
-    "values":[-26,5.5]
+    "knobs":[[0,0,0],[0,0,0],[0,0,0]],
+    "quantities":["power","frequency","programmable_attenuator"],
+    "units":["dBm","GHz","dB"],
+    "multipliers":[[0.1,0.01,0.001],[0.1,0.01,0.001],[10,1,0.1]],
+    "max":[0,9,0],
+    "min":[-60,4,-63],
+    "defaults":[-26,5.5,30],
+    "values":[-26,5.5,30]
 },{
     "knob_mode":"radio_spectrum",
     "knobs":[[0,0,0],[0,0,0]],
@@ -87,17 +59,18 @@ noisecube.controls = [{
     "defaults":[5.5,0.1],
     "values":[5.5,0.1]
 },{
-    "knob_mode":"audio_spectrum",
-    "knobs":[],
-    "quantities":[],
-    "units":[],
-    "multipliers":[],
-    "max":[],
-    "min":[],
-    "defaults":[],
-    "values":[]
+    "knob_mode":"am_radio_spectrum",
+    "knobs":[[0,0,0]],
+    "quantities":["demodulation_frequency"],
+    "units":["GHz"],
+    "multipliers":[[0.1,0.01,0.001]],
+    "max":[9],
+    "min":[4],
+    "defaults":[5.5],
+    "values":[5.5]
 }];
 
+save_file("noisecube.json",JSON.stringify(noisecube,null,"    "));
 
 knobIndex = -1;//always -1 when mouse not in knob
 buttonIndex = -1;//always -1 when mouse not in button
