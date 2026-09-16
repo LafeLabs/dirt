@@ -7,6 +7,7 @@ if (!debug_mode) {
 controlIndex = 0;
 
 noisecube = {};
+
 noisecube.values = {
     "qubit_flux_bias":{
         "dc_offset":0,
@@ -45,12 +46,57 @@ noisecube.controls = [{
     "min":[-1,-1,100],
     "defaults":[0,0,440],
     "values":[0,0,440]
+},{
+    "knob_mode":"noise_source_bias",
+    "knobs":[[0,0,0],[0,0,0],[0,0,0]],
+    "quantities":["dc_offset","ac_vpp","ac_frequency"],
+    "units":["V","V","Hz"],
+    "multipliers":[[0.1,0.01,0.001],[0.1,0.01,0.001],[100,10,1]],
+    "max":[1,1,5000],
+    "min":[-1,-1,100],
+    "defaults":[0,0,440],
+    "values":[0,0,440]
+},{
+    "knob_mode":"radio_pump",
+    "knobs":[[0,0,0],[0,0,0]],
+    "quantities":["power","frequency"],
+    "units":["dBm","GHz"],
+    "multipliers":[[0.1,0.01,0.001],[0.1,0.01,0.001]],
+    "max":[0,9],
+    "min":[-40,4],
+    "defaults":[-26,6],
+    "values":[-26,6]
+},{
+    "knob_mode":"radio_probe",
+    "knobs":[[0,0,0],[0,0,0]],
+    "quantities":["power","frequency"],
+    "units":["dBm","GHz"],
+    "multipliers":[[0.1,0.01,0.001],[0.1,0.01,0.001]],
+    "max":[0,9],
+    "min":[-60,4],
+    "defaults":[-26,5.5],
+    "values":[-26,5.5]
+},{
+    "knob_mode":"radio_spectrum",
+    "knobs":[[0,0,0],[0,0,0]],
+    "quantities":["center_frequency","frequency_range"],
+    "units":["GHz","GHz"],
+    "multipliers":[[0.1,0.01,0.001],[0.1,0.01,0.001]],
+    "max":[9,4],
+    "min":[4,0],
+    "defaults":[5.5,0.1],
+    "values":[5.5,0.1]
+},{
+    "knob_mode":"audio_spectrum",
+    "knobs":[],
+    "quantities":[],
+    "units":[],
+    "multipliers":[],
+    "max":[],
+    "min":[],
+    "defaults":[],
+    "values":[]
 }];
-
-noisecube.controls[0].values[0] = noisecube.controls[0].defaults[0]
-noisecube.controls[0].values[0] += noisecube.controls[0].multipliers[0][0]*noisecube.controls[0].knobs[0][0];
-noisecube.controls[0].values[0] += noisecube.controls[0].multipliers[0][1]*noisecube.controls[0].knobs[0][1];
-noisecube.controls[0].values[0] += noisecube.controls[0].multipliers[0][2]*noisecube.controls[0].knobs[0][2];
 
 
 knobIndex = -1;//always -1 when mouse not in knob
@@ -100,33 +146,29 @@ function draw() {
     textSize(20);
     text(noisecube.controls[controlIndex].knob_mode,5,25);
     
-    
-
-    
-    
-    for(row = 0; row < 3; row++){
-        noisecube.controls[0].values[row] = noisecube.controls[0].defaults[row]
-        noisecube.controls[0].values[row] += noisecube.controls[0].multipliers[row][0]*noisecube.controls[0].knobs[row][0];
-        noisecube.controls[0].values[row] += noisecube.controls[0].multipliers[row][1]*noisecube.controls[0].knobs[row][1];
-        noisecube.controls[0].values[row] += noisecube.controls[0].multipliers[row][2]*noisecube.controls[0].knobs[row][2];
-        noisecube.controls[0].values[row] = Math.round(noisecube.controls[0].values[row]*1000)/1000;
+    for(row = 0; row < noisecube.controls[controlIndex].knobs.length; row++){
+        noisecube.controls[controlIndex].values[row] = noisecube.controls[controlIndex].defaults[row]
+        noisecube.controls[controlIndex].values[row] += noisecube.controls[controlIndex].multipliers[row][0]*noisecube.controls[controlIndex].knobs[row][0];
+        noisecube.controls[controlIndex].values[row] += noisecube.controls[controlIndex].multipliers[row][1]*noisecube.controls[controlIndex].knobs[row][1];
+        noisecube.controls[controlIndex].values[row] += noisecube.controls[controlIndex].multipliers[row][2]*noisecube.controls[controlIndex].knobs[row][2];
+        noisecube.controls[controlIndex].values[row] = Math.round(noisecube.controls[controlIndex].values[row]*1000)/1000;
         
-        if(noisecube.controls[0].values[row] > noisecube.controls[0].max[row]){
-            noisecube.controls[0].values[row] = noisecube.controls[0].max[row];
+        if(noisecube.controls[controlIndex].values[row] > noisecube.controls[controlIndex].max[row]){
+            noisecube.controls[controlIndex].values[row] = noisecube.controls[controlIndex].max[row];
         }
-        if(noisecube.controls[0].values[row] < noisecube.controls[0].min[row]){
-            noisecube.controls[0].values[row] = noisecube.controls[0].min[row];
+        if(noisecube.controls[controlIndex].values[row] < noisecube.controls[controlIndex].min[row]){
+            noisecube.controls[controlIndex].values[row] = noisecube.controls[controlIndex].min[row];
         }        
         strokeWeight(1);
         fill(0);
-        text(noisecube.controls[controlIndex].quantities[row] + " = " + noisecube.controls[0].values[row] + " " + noisecube.controls[controlIndex].units[row],5,knob_origin_y + knob_spacing_y*row - 10 - knob_radius);
+        text(noisecube.controls[controlIndex].quantities[row] + " = " + noisecube.controls[controlIndex].values[row] + " " + noisecube.controls[controlIndex].units[row],5,knob_origin_y + knob_spacing_y*row - 10 - knob_radius);
         
         for(col = 0; col < 3; col++){
             knob_x = knob_origin_x + col*knob_spacing_x;
             knob_y = knob_origin_y + row*knob_spacing_y;
             strokeWeight(1);
             fill(0);
-            text(noisecube.controls[0].knobs[row][col]+"x"+noisecube.controls[0].multipliers[row][col],knob_x - 10,knob_y + knob_radius + 25);
+            text(noisecube.controls[controlIndex].knobs[row][col]+"x"+noisecube.controls[controlIndex].multipliers[row][col],knob_x - 10,knob_y + knob_radius + 25);
             strokeWeight(5);
             fill(255);
     
@@ -134,6 +176,10 @@ function draw() {
             if(knob_distance < knob_radius){
                 fill("#00ff0080");
                 knobIndex = 3*row + col;
+                if (mouseIsPressed === true) {
+                    //fill("green");
+                }
+
             }
             else{
                 fill(255);
@@ -157,13 +203,24 @@ function draw() {
             button_y = button_origin_y + row*button_spacing_y;
             if(Math.abs(mouseX - button_x) < 0.5*button_width && Math.abs(mouseY - button_y) < 0.5*button_height){
                 fill("#00ff0080");
+                if (mouseIsPressed === true) {
+                    fill("green");
+                }
+
                 buttonIndex = 3*row + col;
+        
             }
             else{
                 fill(255);
             }
+            strokeWeight(5);
             rect(button_x - 0.5*button_width,button_y - 0.5*button_height,button_width,button_height);
+            strokeWeight(1);
+            fill(0);
             
+            //noisecube.controls
+            
+            text(noisecube.controls[3*row + col].knob_mode,button_x - 0.5*button_width + 5,button_y+7);
         }
     }
     
@@ -184,6 +241,8 @@ function mouseWheel(event) {
 
 }
 
+ 
+
 function sendData(instrumentData) {
   if (!debug_mode && socket) {
     socket.send(JSON.stringify(instrumentData));
@@ -192,7 +251,10 @@ function sendData(instrumentData) {
   }
 }
 
+
 function mouseClicked() {
-  
-//    alert(buttonIndex);
+  if ([0, 1, 2, 3, 4, 5].includes(buttonIndex)) {
+    controlIndex = buttonIndex;
+  }
 }
+
