@@ -7,6 +7,33 @@ if (!debug_mode) {
 controlIndex = 0;
 
 noisecube = {};
+noisecube.values = {
+    "qubit_flux_bias":{
+        "dc_offset":0,
+        "ac_vpp":0,
+        "ac_frequency":220
+    },
+    "noise_source_bias":{
+        "dc_offset":0,
+        "ac_vpp":0,
+        "ac_frequency":440
+    },
+    "radio_pump":{
+        "power":-30,
+        "frequency":6e9
+    },
+    "radio_probe":{
+        "power":-70,
+        "frequency":5e9
+    },
+    "radio_spectrum":{
+        "center_frequency":5.5e9,
+        "frequency_sweep_width":0.2e9
+    },
+    "audio_spectrum":{
+        "on":true
+    }
+};
 
 noisecube.controls = [{
     "knob_mode":"qubit_flux_bias",
@@ -16,8 +43,14 @@ noisecube.controls = [{
     "multipliers":[[0.1,0.01,0.001],[0.1,0.01,0.001],[100,10,1]],
     "maxima":[1,1,5000],
     "minima":[-1,-1,100],
-    "defaults":[0,0,220]
+    "defaults":[0,0,440],
+    "values":[0,0,440]
 }];
+
+noisecube.controls[0].values[0] = noisecube.controls[0].defaults[0]
+noisecube.controls[0].values[0] += noisecube.controls[0].multipliers[0][0]*noisecube.controls[0].knobs[0][0];
+noisecube.controls[0].values[0] += noisecube.controls[0].multipliers[0][1]*noisecube.controls[0].knobs[0][1];
+noisecube.controls[0].values[0] += noisecube.controls[0].multipliers[0][2]*noisecube.controls[0].knobs[0][2];
 
 
 knobIndex = -1;//always -1 when mouse not in knob
@@ -58,17 +91,38 @@ function setup() {
 function draw() {
 
     clear();
-    fill(255);
     stroke(0);
     strokeWeight(1);
     line(width/2,0,width/2,height);
-    strokeWeight(5);
     knobIndex = -1;//always -1 when mouse not in knob
-    for(row = 0; row < 3; row++){
-        for(col = 0; col < 3; col++){
+    strokeWeight(1);
+    fill(0);
+    textSize(20);
+    text(noisecube.controls[controlIndex].knob_mode,5,25);
+    
+    
 
+    
+    
+    for(row = 0; row < 3; row++){
+        noisecube.controls[0].values[row] = noisecube.controls[0].defaults[row]
+        noisecube.controls[0].values[row] += noisecube.controls[0].multipliers[row][0]*noisecube.controls[0].knobs[row][0];
+        noisecube.controls[0].values[row] += noisecube.controls[0].multipliers[row][1]*noisecube.controls[0].knobs[row][1];
+        noisecube.controls[0].values[row] += noisecube.controls[0].multipliers[row][2]*noisecube.controls[0].knobs[row][2];
+        noisecube.controls[0].values[row] = Math.round(noisecube.controls[0].values[row]*1000)/1000;
+        strokeWeight(1);
+        fill(0);
+        text(noisecube.controls[controlIndex].quantities[row] + " = " + noisecube.controls[0].values[row] + " " + noisecube.controls[controlIndex].units[row],5,knob_origin_y + knob_spacing_y*row - 10 - knob_radius);
+        
+        for(col = 0; col < 3; col++){
             knob_x = knob_origin_x + col*knob_spacing_x;
             knob_y = knob_origin_y + row*knob_spacing_y;
+            strokeWeight(1);
+            fill(0);
+            text(noisecube.controls[0].knobs[row][col]+"x"+noisecube.controls[0].multipliers[row][col],knob_x - 10,knob_y + knob_radius + 25);
+            strokeWeight(5);
+            fill(255);
+    
             knob_distance = Math.sqrt( (knob_x - mouseX)**2  + (knob_y - mouseY)**2);
             if(knob_distance < knob_radius){
                 fill("#00ff0080");
@@ -119,6 +173,8 @@ function mouseWheel(event) {
         }
 
     }
+
+
 }
 
 function sendData(instrumentData) {
