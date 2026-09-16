@@ -235,7 +235,31 @@ function mouseWheel(event) {
         else{
             noisecube.controls[controlIndex].knobs[Math.floor(knobIndex/3)][knobIndex%3]--;
         }
+        
+        knobPayload = {};
+        
+        knobPayload.quantity = noisecube.controls[controlIndex].quantities[Math.floor(knobIndex/3)];
+        knobPayload.unit = noisecube.controls[controlIndex].units[Math.floor(knobIndex/3)];
+        knobPayload.knob_mode = noisecube.controls[controlIndex].knob_mode;
+        
+        let knobRow = Math.floor(knobIndex/3);
 
+        noisecube.controls[controlIndex].values[knobRow] = noisecube.controls[controlIndex].defaults[knobRow]
+        noisecube.controls[controlIndex].values[knobRow] += noisecube.controls[controlIndex].multipliers[knobRow][0]*noisecube.controls[controlIndex].knobs[knobRow][0];
+        noisecube.controls[controlIndex].values[knobRow] += noisecube.controls[controlIndex].multipliers[knobRow][1]*noisecube.controls[controlIndex].knobs[knobRow][1];
+        noisecube.controls[controlIndex].values[knobRow] += noisecube.controls[controlIndex].multipliers[knobRow][2]*noisecube.controls[controlIndex].knobs[knobRow][2];
+        noisecube.controls[controlIndex].values[knobRow] = Math.round(noisecube.controls[controlIndex].values[knobRow]*1000)/1000;
+        
+        if(noisecube.controls[controlIndex].values[knobRow] > noisecube.controls[controlIndex].max[knobRow]){
+            noisecube.controls[controlIndex].values[knobRow] = noisecube.controls[controlIndex].max[knobRow];
+        }
+        if(noisecube.controls[controlIndex].values[knobRow] < noisecube.controls[controlIndex].min[knobRow]){
+            noisecube.controls[controlIndex].values[knobRow] = noisecube.controls[controlIndex].min[knobRow];
+        }        
+
+        knobPayload.value = noisecube.controls[controlIndex].values[knobRow];
+        sendData(knobPayload);
+        
     }
 
 
