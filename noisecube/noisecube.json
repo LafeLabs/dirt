@@ -338,5 +338,9 @@
                 5.5
             ]
         }
-    ]
+    ],
+    "spectra": [],
+    "knob_history": [],
+    "fghz": [],
+    "audio_frequency": []
 }

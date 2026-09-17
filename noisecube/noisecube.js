@@ -1,4 +1,4 @@
-const debug_mode = true;//set to false to send data over socket
+const debug_mode = false;//set to false to send data over socket
 let socket = null;
 if (!debug_mode) {
   socket = new WebSocket('ws://localhost:6502');//this talks to instrument.py, while port 8086 talks to dirt.py
@@ -69,6 +69,11 @@ noisecube.controls = [{
     "defaults":[5.5],
     "values":[5.5]
 }];
+
+noisecube.spectra = [];
+noisecube.knob_history = [];
+noisecube.fghz = [];
+noisecube.audio_frequency = [];
 
 save_file("noisecube.json",JSON.stringify(noisecube,null,"    "));
 
@@ -231,6 +236,8 @@ function mouseWheel(event) {
         }        
 
         knobPayload.value = noisecube.controls[controlIndex].values[knobRow];
+        knobPayload.timestamp = Date.now();
+        
         sendData(knobPayload);
         
     }
