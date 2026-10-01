@@ -1,14 +1,12 @@
 # [dirt](https://github.com/lafelabs/dirt/)
 
- - [spore.py](spore.py)
- - [dirt.txt](dirt.txt)
- - [dirt.js](dirt.js)
- - [dirt.py](dirt.py)
- - [dirt.html](dirt.html)
- 
 ```
-curl -o spore.py https://raw.githubusercontent.com/LafeLabs/dirt/refs/heads/main/spore.py
-curl -o dirt.txt https://raw.githubusercontent.com/LafeLabs/dirt/refs/heads/main/dirt.txt
-python spore.py
+curl -o dirtspore.py https://raw.githubusercontent.com/LafeLabs/dirt/refs/heads/main/dirtspore.py
+python dirtspore.py
 python dirt.py
 ```
+ - [dirt.html](dirt.html)
+ - [dirt.js](dirt.js)
+ - [dirt.py](dirt.py)
+ - [dirt.php](dirt.php)
+ - [dirtspore.py](dirtspore.py)

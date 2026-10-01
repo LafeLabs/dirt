@@ -20,5 +20,15 @@ with open("dirt.html", "r") as file:
     text = text + file.read()
 text = text + "<dirt.html>\n";
 
-with open("dirt.txt", "w") as file:
-    file.write(text)
+text_array = text.split("\n")
+
+comment_text = ""
+for line in text_array:
+    comment_text += "#" + line + "\n"
+
+with open("spore.py", "r") as file:
+    spore_code =  file.read()
+
+with open("dirtspore.py", "w") as file:
+    file.write(spore_code + "#spore-break\n" + comment_text)
+    
