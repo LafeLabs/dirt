@@ -262,7 +262,7 @@ with open("dirt.php", "w") as file:
 #
 #<div id = "lightdarkbutton" class = "button">LIGHT MODE</div>
 #
-#<a href=  "index.html" style = "position:absolute;right:5px;top:1.5em;font-size:2em;font-family:Arial">HOME</a>
+#<a href=  "index.html" style = "display:none;position:absolute;right:5px;top:1.5em;font-size:2em;font-family:Arial">HOME</a>
 #
 #
 #<table id = "inputtable">

@@ -30,5 +30,5 @@ with open("spore.py", "r") as file:
     spore_code =  file.read()
 
 with open("dirtspore.py", "w") as file:
-    file.write(spore_code + "#spore-break\n" + comment_text)
+    file.write(spore_code + "\n#spore-break\n" + comment_text)
     
