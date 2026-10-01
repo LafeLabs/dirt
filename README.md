@@ -1,22 +1,14 @@
 # [dirt](https://github.com/lafelabs/dirt/)
 
-
-## 1. Acquire the dirt spore
-
-Download [dirtspore.py](dirtspore.py) or use curl:
-
+ - [spore.py](spore.py)
+ - [dirt.txt](dirt.txt)
+ - [dirt.js](dirt.js)
+ - [dirt.py](dirt.py)
+ - [dirt.html](dirt.html)
+ 
 ```
-curl -o dirtspore.py https://raw.githubusercontent.com/LafeLabs/dirt/refs/heads/main/dirtspore.py
-```
-
-## 2. Run the dirt spore
-
-```
-python dirtspore.py
-```
-
-## 3. Run Dirt
-
-```
+curl -o spore.py https://raw.githubusercontent.com/LafeLabs/dirt/refs/heads/main/spore.py
+curl -o dirt.txt https://raw.githubusercontent.com/LafeLabs/dirt/refs/heads/main/dirt.txt
+python spore.py
 python dirt.py
 ```
