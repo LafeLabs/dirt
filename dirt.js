@@ -61,6 +61,13 @@ function save_file(name, data) {
     return sendWebSocketMessage('save_file', { filename: name, data: data }); 
 } 
 
+function pull_file(url,name) { 
+    return sendWebSocketMessage('pull_file', { url: url, filename: name }); 
+} 
+
+function push_file(url, name, data) { 
+    return sendWebSocketMessage('push_file', { url: url, filename: name, data: data }); 
+} 
 function delete_file(name) { 
     return sendWebSocketMessage('delete_file', { filename: name }); 
 } 

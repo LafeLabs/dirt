@@ -86,6 +86,13 @@ with open("dirt.php", "w") as file:
 #    return sendWebSocketMessage('save_file', { filename: name, data: data }); 
 #} 
 #
+#function pull_file(url,name) { 
+#    return sendWebSocketMessage('pull_file', { url: url, filename: name }); 
+#} 
+#
+#function push_file(url, name, data) { 
+#    return sendWebSocketMessage('push_file', { url: url, filename: name, data: data }); 
+#} 
 #function delete_file(name) { 
 #    return sendWebSocketMessage('delete_file', { filename: name }); 
 #} 
@@ -112,6 +119,7 @@ with open("dirt.php", "w") as file:
 #import os
 #import shutil
 #import websockets
+#import urllib.request
 #
 #async def handle_client(websocket):
 #    try:
@@ -149,6 +157,10 @@ with open("dirt.php", "w") as file:
 #                    with open(filename, "w", encoding="utf-8") as f:
 #                        f.write(data)
 #                    await send_success(websocket, msg_id, "File saved successfully")
+#                elif action == "push_file":
+#                    pass
+#                elif action == "pull_file":
+#                    pass
 #
 #                elif action == "delete_file":
 #                    filename = request.get("filename")
