@@ -83,15 +83,15 @@ with open("dirt.php", "w") as file:
 #} 
 #
 #function save_file(name, data) { 
-#    return sendWebSocketMessage('save_file', { filename: name, data: data }); 
+#    return sendWebSocketMessage('save_file', { filename: name, data: data });
 #} 
 #
-#function pull_file(url,name) { 
-#    return sendWebSocketMessage('pull_file', { url: url, filename: name }); 
+#function pull_file(url) { 
+#    return sendWebSocketMessage('pull_file', { url: url}); 
 #} 
 #
-#function push_file(url, name, data) { 
-#    return sendWebSocketMessage('push_file', { url: url, filename: name, data: data }); 
+#function push_file(dirt_php, file, data) { 
+#    return sendWebSocketMessage('push_file', { dirt_php: dirt_php, file: file, data: data }); 
 #} 
 #function delete_file(name) { 
 #    return sendWebSocketMessage('delete_file', { filename: name }); 
@@ -157,11 +157,27 @@ with open("dirt.php", "w") as file:
 #                    with open(filename, "w", encoding="utf-8") as f:
 #                        f.write(data)
 #                    await send_success(websocket, msg_id, "File saved successfully")
-#                elif action == "push_file":
-#                    pass
-#                elif action == "pull_file":
-#                    pass
 #
+#                elif action == "push_file":
+#                    import urllib.parse
+#                    dirt_php = request.get("dirt_php")
+#                    filename = urllib.parse.quote(request.get("file", ""))
+#                    data = urllib.parse.quote(request.get("data", ""))
+#                    
+#                    push_url = f"{dirt_php}?file={filename}&data={data}"
+#                    
+#                    def sync_push():
+#                        with urllib.request.urlopen(push_url) as response:
+#                            return response.read().decode('utf-8')
+#                            
+#                    server_response = await asyncio.to_thread(sync_push)
+#                    await send_success(websocket, msg_id, "File pushed successfully")
+#                
+#                elif action == "pull_file":
+#                    url = request.get("url")
+#                    with urllib.request.urlopen(url) as response:
+#                        content = response.read().decode('utf-8')
+#                    await send_success(websocket, msg_id, content)
 #                elif action == "delete_file":
 #                    filename = request.get("filename")
 #                    if not filename:
