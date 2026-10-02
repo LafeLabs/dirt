@@ -58,15 +58,15 @@ function load_file(name) {
 } 
 
 function save_file(name, data) { 
-    return sendWebSocketMessage('save_file', { filename: name, data: data }); 
+    return sendWebSocketMessage('save_file', { filename: name, data: data });
 } 
 
-function pull_file(url,name) { 
-    return sendWebSocketMessage('pull_file', { url: url, filename: name }); 
+function pull_file(url) { 
+    return sendWebSocketMessage('pull_file', { url: url}); 
 } 
 
-function push_file(url, name, data) { 
-    return sendWebSocketMessage('push_file', { url: url, filename: name, data: data }); 
+function push_file(dirt_php, file, data) { 
+    return sendWebSocketMessage('push_file', { dirt_php: dirt_php, file: file, data: data }); 
 } 
 function delete_file(name) { 
     return sendWebSocketMessage('delete_file', { filename: name }); 
