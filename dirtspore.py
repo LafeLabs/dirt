@@ -22,6 +22,9 @@ with open("dirt.py", "w") as file:
 with open("dirt.php", "w") as file:
     file.write(php)
 #spore-break
+#<dirt.txt>
+#THE PURPOSE OF DIRT IS TO BUILD FULL STACK TRASH MAGIC
+#THE PURPOSE OF TRASH MAGIC IS TO BUILD A GLOBAL NETWORK WHICH DELIVERS EVERYTHING FREE TO EVERYONE EVERYWHERE RIGHT NOW USING ONLY TRASH AND WHAT IS GROWN LOCALLY AND LOCAL ENERGY OF THE SUN, THE MOON, AND THE LIVING EARTH<dirt.txt>
 #<dirt.js>
 #const ws = new WebSocket('ws://localhost:8086');
 #const pendingRequests = new Map();

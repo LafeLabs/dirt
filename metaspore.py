@@ -1,5 +1,9 @@
 text = ""
 
+text = text + "<dirt.txt>\n";
+with open("dirt.txt", "r") as file:
+    text = text + file.read()
+text = text + "<dirt.txt>\n";
 text = text + "<dirt.js>\n";
 with open("dirt.js", "r") as file:
     text = text + file.read()
