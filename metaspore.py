@@ -28,7 +28,10 @@ files = [
         "wall.html",
         "wall.txt",
         "README.md",
-        "readme.html"
+        "readme.html",
+        "icon.html",
+        "icon.json",
+        "icon.txt"
 ]
 
 json_data['files'] = files

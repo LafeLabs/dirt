@@ -49,7 +49,10 @@ for file_name in file_names:
 #        "wall.html",
 #        "wall.txt",
 #        "README.md",
-#        "readme.html"
+#        "readme.html",
+#        "icon.html",
+#        "icon.json",
+#        "icon.txt"
 #    ]
 #}</dirt.json>
 #<dirt.js>
@@ -1689,4 +1692,597 @@ for file_name in file_names:
 #
 #</body>
 #</html></readme.html>
+#<icon.html>
+#<!doctype html>
+#<html lang="en">
+#<head>
+#    <meta charset="utf-8">
+#
+#    <!-- 
+#
+#icon: array of brushstrokes
+#brushstroke: array of points, color, strokewidth
+#iconfeed: an array of icons
+#points are in percent of size of canvas
+#    -->
+#    <title>ICON</title>
+#<link href="data:image/x-icon;base64,AAABAAEAEBAQAAEABAAoAQAAFgAAACgAAAAQAAAAIAAAAAEABAAAAAAAgAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAZ4efAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEREREREREREREREREREREREAAAAAAAAREQEREREREBERAREREREQEREBEAAAARAREQEQEREBEBERARAQAQEQEREBEBABARAREQEQEREBEBERARAAAAEQEREBERERERAREQEREREREBERAAAAAAAAEREREREREREREREREREREREAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" rel="icon" type="image/x-icon">
+#
+#    <!--Stop Google:-->
+#<META NAME="robots" CONTENT="noindex,nofollow">
+#<script src="https://cdn.jsdelivr.net/npm/p5@1.7.0/lib/p5.js"></script>
+#<script src = "https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+#<script src = "php.js"></script>
+#</head>
+#<body>
+#    <input id = "icon-input">
+#    <div id ="p5js-box"></div>
+#    <div class = "button" id = "deletebutton">DELETE</div>
+#    <div class = "button" id = "clearbutton">CLEAR</div>
+#</div>
+#<script>
+#icon = [];//array of strokes
+#brushStroke = [];//array of points 
+#inLine = false;
+#point = {
+#    "x":500,
+#    "y":500
+#};
+#
+#document.getElementById("clearbutton").onclick= function(){
+#    icon = [];
+#    saveIcon();
+#    drawIcon();
+#}
+#
+#document.getElementById("deletebutton").onclick= function(){
+#    let trash = icon.pop();
+#    saveIcon();
+#    drawIcon();
+#}
+#
+#function saveIcon(){
+#    raw_text = JSON.stringify(icon, null, 4);
+#    raw_text =encodeURIComponent(raw_text);
+#    save_file("icon.json",raw_text);
+#}
+#
+#
+#document.getElementById("icon-input").onchange = function() {
+#    data = encodeURIComponent(this.value);
+#    save_file("icon.txt",data);
+#}
+#
+#load_file("icon.json").then(
+#    filedata => {
+#        icon = JSON.parse(filedata.trim());
+#        drawIcon();
+#    }
+#);
+#
+#
+#function setup() {
+#  let p5jsBox = document.getElementById('p5js-box');
+#  let w = p5jsBox.clientWidth;
+#  let h = p5jsBox.clientHeight;
+#  let p5Canvas = createCanvas(w, h);
+#  p5Canvas.parent('p5js-box');
+#  background(159,135,103);
+#  stroke(0);
+#  strokeWeight(30);
+#}    
+#function draw(){
+#    if(mouseX > 0 && mouseX < width && mouseY > 0 && mouseY < height){
+#      if (mouseIsPressed === true) {
+#        if(inLine == false){
+#            var  point = {};
+#            point.x = Math.round(1000*mouseX/width);
+#            point.y = Math.round(1000*mouseY/width);
+#            brushStroke.push(point);
+#        }
+#        line(mouseX, mouseY, pmouseX, pmouseY);
+#        inLine = true;
+#        if(mouseX != pmouseX || mouseY != pmouseY){
+#            var  point = {};
+#            point.x = Math.round(1000*mouseX/width);
+#            point.y = Math.round(1000*mouseY/width);
+#            brushStroke.push(point);
+#        }
+#      }
+#      else{
+#          if(inLine){
+#              icon.push(brushStroke);
+#              brushStroke = [];
+#              saveIcon();
+#          }
+#          inLine = false;
+#      }
+#  }
+#    
+#}
+#
+#
+#function drawIcon(){
+#    //clear();
+#    background(159,135,103);
+#    for(var strokeindex = 0;strokeindex < icon.length;strokeindex++){
+#        for(var pointindex = 1;pointindex < icon[strokeindex].length;pointindex++){
+#            
+#            line(0.001*width*icon[strokeindex][pointindex - 1].x,0.001*width*icon[strokeindex][pointindex - 1].y,0.001*width*icon[strokeindex][pointindex].x,0.001*width*icon[strokeindex][pointindex].y);
+#        }
+#    }
+#}
+#text = "";
+#load_file("icon.txt").then(
+#    filedata => {
+#        text = filedata.trim();
+#        document.getElementById("icon-input").value =text; 
+#    }
+#);
+#
+#</script>
+#<style>
+#body {
+#  margin: 0;
+#  overflow: hidden;
+#  background-color:#9f8767;
+# 
+#}
+#.button{
+#    position:absolute;
+#    font-size:50px;
+#    border:solid;
+#    font-family:Arial;
+#    padding-left:1em;
+#    padding-right:1em;
+#    cursor:pointer;
+#    border-radius:10px;
+#}
+#.button:hover{
+#    background-color:#ff000080;
+#}
+#.button:active{
+#    background-color:#ff0000;
+#}
+#
+#
+##icon-input{
+#    position:absolute;
+#    right:5px;
+#    bottom:5px;
+#    font-family:Arial;
+#    font-size:3em;
+#    background-color:#9f8767;
+#    width:50%;  
+#}
+##p5js-box{
+#    position:absolute;
+#    left:10px;
+#    top:10px;
+#    border:solid;
+#    z-index:1;
+#}
+#@media (orientation: landscape) {
+#  #p5js-box {
+#    height: calc(100vh - 160px);
+#    width: calc(100vh - 160px);
+#  }
+#    .button{
+#        right:10px;
+#    }
+#    #deletebutton{
+#        top:10px;
+#    }
+#    #clearbutton{
+#        top:100px;
+#    }
+##icon-input{
+#    width:80%;
+#}
+#    
+#}
+#
+#@media (orientation: portrait) {
+#  #p5js-box {
+#    width: calc(100vw - 20px);
+#    height: calc(100vw - 20px);
+#  }
+#    .button{
+#        bottom:10px;
+#    }
+#  
+#}
+#
+##p5js-box canvas {
+#  display: block;
+#}
+#
+#</style>
+#</body>
+#</html></icon.html>
+#<icon.json>
+#[
+#    [
+#        {
+#            "x": 422,
+#            "y": 810
+#        },
+#        {
+#            "x": 390,
+#            "y": 823
+#        },
+#        {
+#            "x": 373,
+#            "y": 825
+#        },
+#        {
+#            "x": 339,
+#            "y": 821
+#        },
+#        {
+#            "x": 299,
+#            "y": 810
+#        },
+#        {
+#            "x": 257,
+#            "y": 789
+#        },
+#        {
+#            "x": 215,
+#            "y": 760
+#        },
+#        {
+#            "x": 179,
+#            "y": 719
+#        },
+#        {
+#            "x": 147,
+#            "y": 668
+#        },
+#        {
+#            "x": 120,
+#            "y": 608
+#        },
+#        {
+#            "x": 110,
+#            "y": 575
+#        },
+#        {
+#            "x": 98,
+#            "y": 506
+#        },
+#        {
+#            "x": 96,
+#            "y": 439
+#        },
+#        {
+#            "x": 99,
+#            "y": 406
+#        },
+#        {
+#            "x": 113,
+#            "y": 346
+#        },
+#        {
+#            "x": 135,
+#            "y": 291
+#        },
+#        {
+#            "x": 166,
+#            "y": 239
+#        },
+#        {
+#            "x": 184,
+#            "y": 215
+#        },
+#        {
+#            "x": 228,
+#            "y": 175
+#        },
+#        {
+#            "x": 279,
+#            "y": 140
+#        },
+#        {
+#            "x": 306,
+#            "y": 124
+#        },
+#        {
+#            "x": 362,
+#            "y": 103
+#        },
+#        {
+#            "x": 420,
+#            "y": 89
+#        },
+#        {
+#            "x": 451,
+#            "y": 85
+#        },
+#        {
+#            "x": 515,
+#            "y": 87
+#        },
+#        {
+#            "x": 580,
+#            "y": 96
+#        },
+#        {
+#            "x": 609,
+#            "y": 108
+#        },
+#        {
+#            "x": 665,
+#            "y": 134
+#        },
+#        {
+#            "x": 690,
+#            "y": 149
+#        },
+#        {
+#            "x": 735,
+#            "y": 190
+#        },
+#        {
+#            "x": 772,
+#            "y": 236
+#        },
+#        {
+#            "x": 802,
+#            "y": 286
+#        },
+#        {
+#            "x": 814,
+#            "y": 314
+#        },
+#        {
+#            "x": 832,
+#            "y": 370
+#        },
+#        {
+#            "x": 842,
+#            "y": 426
+#        },
+#        {
+#            "x": 844,
+#            "y": 455
+#        },
+#        {
+#            "x": 841,
+#            "y": 510
+#        },
+#        {
+#            "x": 831,
+#            "y": 563
+#        },
+#        {
+#            "x": 821,
+#            "y": 588
+#        },
+#        {
+#            "x": 800,
+#            "y": 635
+#        },
+#        {
+#            "x": 771,
+#            "y": 682
+#        },
+#        {
+#            "x": 754,
+#            "y": 703
+#        },
+#        {
+#            "x": 670,
+#            "y": 778
+#        },
+#        {
+#            "x": 647,
+#            "y": 795
+#        },
+#        {
+#            "x": 598,
+#            "y": 818
+#        },
+#        {
+#            "x": 546,
+#            "y": 834
+#        },
+#        {
+#            "x": 521,
+#            "y": 838
+#        },
+#        {
+#            "x": 478,
+#            "y": 839
+#        },
+#        {
+#            "x": 457,
+#            "y": 839
+#        },
+#        {
+#            "x": 420,
+#            "y": 835
+#        },
+#        {
+#            "x": 388,
+#            "y": 828
+#        },
+#        {
+#            "x": 362,
+#            "y": 816
+#        },
+#        {
+#            "x": 352,
+#            "y": 809
+#        },
+#        {
+#            "x": 335,
+#            "y": 797
+#        },
+#        {
+#            "x": 324,
+#            "y": 789
+#        },
+#        {
+#            "x": 323,
+#            "y": 786
+#        },
+#        {
+#            "x": 321,
+#            "y": 781
+#        },
+#        {
+#            "x": 324,
+#            "y": 778
+#        },
+#        {
+#            "x": 325,
+#            "y": 777
+#        }
+#    ],
+#    [
+#        {
+#            "x": 426,
+#            "y": 473
+#        },
+#        {
+#            "x": 404,
+#            "y": 472
+#        },
+#        {
+#            "x": 399,
+#            "y": 469
+#        },
+#        {
+#            "x": 394,
+#            "y": 459
+#        },
+#        {
+#            "x": 395,
+#            "y": 448
+#        },
+#        {
+#            "x": 405,
+#            "y": 436
+#        },
+#        {
+#            "x": 412,
+#            "y": 430
+#        },
+#        {
+#            "x": 432,
+#            "y": 420
+#        },
+#        {
+#            "x": 441,
+#            "y": 419
+#        },
+#        {
+#            "x": 458,
+#            "y": 420
+#        },
+#        {
+#            "x": 472,
+#            "y": 429
+#        },
+#        {
+#            "x": 476,
+#            "y": 434
+#        },
+#        {
+#            "x": 475,
+#            "y": 450
+#        },
+#        {
+#            "x": 466,
+#            "y": 468
+#        },
+#        {
+#            "x": 459,
+#            "y": 475
+#        },
+#        {
+#            "x": 444,
+#            "y": 489
+#        },
+#        {
+#            "x": 430,
+#            "y": 496
+#        },
+#        {
+#            "x": 425,
+#            "y": 497
+#        },
+#        {
+#            "x": 416,
+#            "y": 492
+#        },
+#        {
+#            "x": 415,
+#            "y": 480
+#        },
+#        {
+#            "x": 416,
+#            "y": 473
+#        },
+#        {
+#            "x": 423,
+#            "y": 458
+#        },
+#        {
+#            "x": 433,
+#            "y": 447
+#        },
+#        {
+#            "x": 439,
+#            "y": 444
+#        },
+#        {
+#            "x": 446,
+#            "y": 443
+#        },
+#        {
+#            "x": 448,
+#            "y": 451
+#        },
+#        {
+#            "x": 448,
+#            "y": 458
+#        },
+#        {
+#            "x": 444,
+#            "y": 469
+#        },
+#        {
+#            "x": 440,
+#            "y": 479
+#        },
+#        {
+#            "x": 437,
+#            "y": 482
+#        },
+#        {
+#            "x": 434,
+#            "y": 483
+#        },
+#        {
+#            "x": 436,
+#            "y": 479
+#        },
+#        {
+#            "x": 443,
+#            "y": 472
+#        },
+#        {
+#            "x": 447,
+#            "y": 468
+#        },
+#        {
+#            "x": 459,
+#            "y": 464
+#        }
+#    ]
+#]</icon.json>
+#<icon.txt>
+#MIGHTY SUN! SOL INVICTUS!</icon.txt>
 #
