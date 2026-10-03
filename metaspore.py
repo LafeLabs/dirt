@@ -6,25 +6,27 @@ with open("dirt.json", "r") as file:
     json_data = json.loads(file.read())
 
 files = [
-"dirt.txt",
-"dirt.json",
-"dirt.js",
-"dirt.py",
-"dirt.php",
-"dirt.html",
-"load-file.php",
-"save-file.php",
-"delete-file.php",
-"list-files.php",
-"list-branches.php",
-"delete-branch.php",
-"create-branch.php",
-"php.js",
-"php.html",
-"feed.html",
-"feed.js",
-"feed.css",
-"feed.json"
+        "dirt.txt",
+        "dirt.json",
+        "dirt.js",
+        "dirt.py",
+        "dirt.php",
+        "dirt.html",
+        "load-file.php",
+        "save-file.php",
+        "delete-file.php",
+        "list-files.php",
+        "list-branches.php",
+        "delete-branch.php",
+        "create-branch.php",
+        "php.js",
+        "php.html",
+        "feed.html",
+        "feed.js",
+        "feed.css",
+        "feed.json",
+        "wall.html",
+        "wall.txt"
 ]
 
 json_data['files'] = files

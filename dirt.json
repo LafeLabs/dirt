@@ -18,6 +18,8 @@
         "feed.html",
         "feed.js",
         "feed.css",
-        "feed.json"
+        "feed.json",
+        "wall.html",
+        "wall.txt"
     ]
 }
