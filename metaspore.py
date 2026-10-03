@@ -26,7 +26,9 @@ files = [
         "feed.css",
         "feed.json",
         "wall.html",
-        "wall.txt"
+        "wall.txt",
+        "README.md",
+        "readme.html"
 ]
 
 json_data['files'] = files
