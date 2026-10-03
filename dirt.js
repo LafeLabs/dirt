@@ -1,3 +1,4 @@
+
 const ws = new WebSocket('ws://localhost:8086');
 const pendingRequests = new Map();
 const messageQueue = [];

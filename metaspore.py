@@ -1,3 +1,9 @@
+import json
+
+json_data = {}
+
+with open("dirt.json", "r") as file:
+    json_data = json.loads(file.read())
 
 files = [
 "dirt.txt",
@@ -14,8 +20,17 @@ files = [
 "delete-branch.php",
 "create-branch.php",
 "php.js",
-"php.html"
+"php.html",
+"feed.html",
+"feed.js",
+"feed.css",
+"feed.json"
 ]
+
+json_data['files'] = files
+
+with open("dirt.json", "w") as file:
+    file.write(json.dumps(json_data, indent=4))
 
 text = ""
 

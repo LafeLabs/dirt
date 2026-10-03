@@ -1,26 +1,23 @@
 {
-    "files":[
-"dirt.txt",
-"dirt.json",
-"dirt.js",
-"dirt.py",
-"dirt.php",
-"dirt.html",
-"load-file.php",
-"save-file.php",
-"delete-file.php",
-"list-files.php",
-"list-branches.php",
-"delete-branch.php",
-"create-branch.php",
-"php.js",
-"php.html"
-],
-    "feed":["FIRST POST!"],
-    "wall":"SELF REPLICATING MEDIA MADE OF TRASH!",
-    "url":"https://www.openstreetmap.org/#map=14/39.75613/-105.00526",
-    "url":"https://www.unionstation.lol/",
-    "icon":[],
-    "knob":0,
-    "slider":0
+    "files": [
+        "dirt.txt",
+        "dirt.json",
+        "dirt.js",
+        "dirt.py",
+        "dirt.php",
+        "dirt.html",
+        "load-file.php",
+        "save-file.php",
+        "delete-file.php",
+        "list-files.php",
+        "list-branches.php",
+        "delete-branch.php",
+        "create-branch.php",
+        "php.js",
+        "php.html",
+        "feed.html",
+        "feed.js",
+        "feed.css",
+        "feed.json"
+    ]
 }

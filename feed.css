@@ -1,0 +1,53 @@
+
+body{
+    background-color:#979496;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+#qrcode img{
+    border:solid;
+    border-color:white;
+    border-width:25px;
+}
+#post{
+    background-color:black;
+    color:#00ff00;
+    font-family:Courier;
+    font-size:3em;
+}
+#clear:hover{
+    background-color:#400000;
+}
+
+#clear{
+    font-size:3em;
+    color:red;
+    background-color:black;
+    width:6em;
+    border:solid;
+    border-radius:0.5em;
+    cursor:pointer;
+    border-color:red;
+    text-align:center;
+}
+.sign{
+  background-color: #9f8767;
+  font-size:2em;
+  font-family:Comic Sans MS;
+  border:solid;
+  padding:1em 1em 1em 1em;
+  margin:1em 1em 1em 1em;
+  border-radius:0.5em;
+}
+.delete-button{
+    color:red;
+    border:solid;
+    border-color:red;
+    background-color:black;
+    font-family:Arial;
+    padding:0.25em 0.25em 0.25em 0.25em;
+    border-radius:0.25em;
+    cursor:pointer;
+}
+.delete-button:hover{
+    background-color:#400000;
+}

@@ -20,36 +20,36 @@ for file_name in file_names:
 
 #spore-break
 #<dirt.txt>
+#
 #THE PURPOSE OF DIRT IS TO BUILD FULL STACK TRASH MAGIC
 #THE PURPOSE OF TRASH MAGIC IS TO BUILD A GLOBAL NETWORK WHICH DELIVERS EVERYTHING FREE TO EVERYONE EVERYWHERE RIGHT NOW USING ONLY TRASH AND WHAT IS GROWN LOCALLY AND LOCAL ENERGY OF THE SUN, THE MOON, AND THE LIVING EARTH
 #</dirt.txt>
 #<dirt.json>
 #{
-#    "files":[
-#"dirt.txt",
-#"dirt.json",
-#"dirt.js",
-#"dirt.py",
-#"dirt.php",
-#"dirt.html",
-#"load-file.php",
-#"save-file.php",
-#"delete-file.php",
-#"list-files.php",
-#"list-branches.php",
-#"delete-branch.php",
-#"create-branch.php",
-#"php.js",
-#"php.html"
-#],
-#    "feed":["FIRST POST!"],
-#    "wall":"SELF REPLICATING MEDIA MADE OF TRASH!",
-#    "url":"https://[WEB PAGE HERE]/",
-#    "icon":[],
-#    "knob":0,
-#    "slider":0
+#    "files": [
+#        "dirt.txt",
+#        "dirt.json",
+#        "dirt.js",
+#        "dirt.py",
+#        "dirt.php",
+#        "dirt.html",
+#        "load-file.php",
+#        "save-file.php",
+#        "delete-file.php",
+#        "list-files.php",
+#        "list-branches.php",
+#        "delete-branch.php",
+#        "create-branch.php",
+#        "php.js",
+#        "php.html",
+#        "feed.html",
+#        "feed.js",
+#        "feed.css",
+#        "feed.json"
+#    ]
 #}</dirt.json>
 #<dirt.js>
+#
 #const ws = new WebSocket('ws://localhost:8086');
 #const pendingRequests = new Map();
 #const messageQueue = [];
@@ -141,6 +141,7 @@ for file_name in file_names:
 #}
 #</dirt.js>
 #<dirt.py>
+#
 #import asyncio
 #import json
 #import os
@@ -282,6 +283,7 @@ for file_name in file_names:
 #    except KeyboardInterrupt:
 #        pass</dirt.py>
 #<dirt.php>
+#
 #<?php
 #    $data = $_GET["data"]; //get data 
 #    $filename = $_GET["file"];//get filename
@@ -290,6 +292,7 @@ for file_name in file_names:
 #    fclose($file);  //close file
 #?></dirt.php>
 #<dirt.html>
+#
 # <!doctype html>
 #<html>
 #<head>
@@ -659,12 +662,14 @@ for file_name in file_names:
 #</body>
 #</html></dirt.html>
 #<load-file.php>
+#
 #<?php
 #$filename = $_REQUEST["filename"];//filename
 #$data = file_get_contents($filename);//get contents of file
 #echo $data;//print contents
 #?></load-file.php>
 #<save-file.php>
+#
 #<?php
 #    $data = $_POST["data"]; //get data 
 #    $filename = $_POST["filename"];//get filename
@@ -673,11 +678,13 @@ for file_name in file_names:
 #    fclose($file);  //close file
 #?></save-file.php>
 #<delete-file.php>
+#
 # <?php
 #    $filename = $_POST["filename"];
 #    unlink($filename);
 #?></delete-file.php>
 #<list-files.php>
+#
 #<?php
 #
 #    $directoryName = isset($_GET["directory"]) ? basename($_GET["directory"]) : '';
@@ -688,6 +695,7 @@ for file_name in file_names:
 #?>
 #</list-files.php>
 #<list-branches.php>
+#
 #<?php
 #
 #    $files = scandir(getcwd());
@@ -699,6 +707,7 @@ for file_name in file_names:
 #?>
 #</list-branches.php>
 #<delete-branch.php>
+#
 #<?php
 #
 #$branchname = $_POST["branch"];//get name of branch to kill
@@ -725,6 +734,7 @@ for file_name in file_names:
 #
 #?></delete-branch.php>
 #<create-branch.php>
+#
 #<?php
 #if(isset($_GET["branch"])){
 #    $branch = $_GET["branch"];
@@ -762,6 +772,7 @@ for file_name in file_names:
 #}
 #</style></create-branch.php>
 #<php.js>
+#
 #
 #function load_file(name) {
 #    return fetch('load-file.php?filename=' + name).then(res => res.text());
@@ -812,6 +823,7 @@ for file_name in file_names:
 #
 #</php.js>
 #<php.html>
+#
 # <!doctype html>
 #<html>
 #<head>
@@ -1170,4 +1182,193 @@ for file_name in file_names:
 #
 #</body>
 #</html></php.html>
+#<feed.html>
+#
+#<!doctype html>
+#<html>
+#<head>
+#    <link href="data:image/x-icon;base64,AAABAAEAEBAQAAEABAAoAQAAFgAAACgAAAAQAAAAIAAAAAEABAAAAAAAgAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAB/3gAA//8AAPb/AAD//wAA//8AAP/7AAD/3wAA3/8AAP7/AAD//wAA//8AAP93AADv/wAA//8AAP//AAB+/gAA" rel="icon" type="image/x-icon">    
+#    <script src="https://cdn.jsdelivr.net/npm/p5@1.7.0/lib/p5.min.js"></script>
+#    <script src = "https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+#    <link rel="stylesheet" href="feed.css">
+#    <title>FEED</title>
+#</head>
+#<body>
+#    <div id ="qrcode"></div>
+#    <input id = "post">
+#    <div id ="feed"></div>
+#    <div id = "clear">CLEAR</div>
+#    <script src="feed.js"></script>
+#</body>
+#</html></feed.html>
+#<feed.js>
+#
+#codesquaresize = 150;
+#qrcode = new QRCode(document.getElementById("qrcode"), {
+#	text: window.location.href,
+#	width: codesquaresize,
+#	height: codesquaresize,
+#	colorDark : "#000000",
+#	colorLight : "#ffffff",
+#	correctLevel : QRCode.CorrectLevel.H
+#});
+#
+#feed = [];
+#
+#document.getElementById("post").value = "";
+#document.getElementById("post").select();
+#
+#document.getElementById("clear").onclick = function(){
+#
+#    feed = [];
+#    loadFeed();
+#    saveFeed();
+#    document.getElementById("post").value = "";
+#    document.getElementById("post").select();
+#    
+#}
+#
+#document.getElementById("post").onchange = function(){
+#    if(this.value.slice(-5) == ".html" || this.value.slice(0,8) == "https://" || this.value.slice(0,8) == "HTTPS://" || this.value.slice(0,7) == "http://"){
+#        post = "<a href = \"" + this.value + "\">" + this.value + "</a>";
+#    }
+#    else{
+#        post = this.value;
+#    }
+#    feed.unshift(post);
+#    this.value = "";
+#    loadFeed();
+#    saveFeed();
+#}
+#
+#load_file('feed.json').then(
+#    raw_feed => {
+#        feed = JSON.parse(raw_feed);
+#        loadFeed();
+#    }
+#);
+#
+#function loadFeed(){
+#
+#    document.getElementById("feed").innerHTML = "";
+#    for(let index = 0;index < feed.length;index++){
+#        let newSign = document.createElement("DIV");
+#        newSign.id = "sign-" + index.toString();
+#        newSign.className = "sign";
+#        newSign.innerHTML = feed[index];
+#        let deleteButton = document.createElement("SPAN");
+#        deleteButton.className = "delete-button";
+#        deleteButton.innerHTML = "DELETE";
+#        deleteButton.onclick  = function(){
+#            let localIndex = parseInt(this.parentNode.id.split("-")[1]);
+#            let newFeed = [];
+#            for(let index = 0;index < feed.length;index++){
+#                if(index != localIndex){
+#                    newFeed.push(feed[index]);
+#                }
+#            }
+#            feed = newFeed;
+#            saveFeed();
+#            loadFeed();
+#        }
+#        newSign.appendChild(deleteButton);
+#        document.getElementById("feed").appendChild(newSign);
+#    }
+#}
+#
+#function saveFeed(){
+#    data = encodeURIComponent(JSON.stringify(feed,null,"   "));
+#    save_file("feed.json",data);
+#}
+#
+#function setup() {
+#    frameRate(3);
+#}
+#
+#function draw(){
+#    //load feed
+#    feedLength = feed.length;
+#    load_file('feed.json').then(
+#    raw_feed => {
+#        feed = JSON.parse(raw_feed);
+#        if(feedLength != feed.length){
+#            loadFeed();
+#        }
+#    });
+#}
+#
+#function load_file(name) {
+#    return fetch('load-file.php?filename=' + name).then(res => res.text());
+#}
+#
+#
+#function save_file(name,data){
+#    fetch('save-file.php', {
+#        method: 'POST',
+#        headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8' },
+#        body: 'data=' + data + '&filename=' + name
+#    });
+#}
+#
+#</feed.js>
+#<feed.css>
+#
+#body{
+#    background-color:#979496;
+#    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+#}
+##qrcode img{
+#    border:solid;
+#    border-color:white;
+#    border-width:25px;
+#}
+##post{
+#    background-color:black;
+#    color:#00ff00;
+#    font-family:Courier;
+#    font-size:3em;
+#}
+##clear:hover{
+#    background-color:#400000;
+#}
+#
+##clear{
+#    font-size:3em;
+#    color:red;
+#    background-color:black;
+#    width:6em;
+#    border:solid;
+#    border-radius:0.5em;
+#    cursor:pointer;
+#    border-color:red;
+#    text-align:center;
+#}
+#.sign{
+#  background-color: #9f8767;
+#  font-size:2em;
+#  font-family:Comic Sans MS;
+#  border:solid;
+#  padding:1em 1em 1em 1em;
+#  margin:1em 1em 1em 1em;
+#  border-radius:0.5em;
+#}
+#.delete-button{
+#    color:red;
+#    border:solid;
+#    border-color:red;
+#    background-color:black;
+#    font-family:Arial;
+#    padding:0.25em 0.25em 0.25em 0.25em;
+#    border-radius:0.25em;
+#    cursor:pointer;
+#}
+#.delete-button:hover{
+#    background-color:#400000;
+#}
+#</feed.css>
+#<feed.json>
+#[
+#   "SECOND POST",
+#   "FIRST POST"
+#]</feed.json>
 #
