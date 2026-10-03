@@ -1,3 +1,4 @@
+import json
 with open("dirtspore.py", "r") as file:
     dirtspore = file.read()
 
@@ -7,23 +8,16 @@ dirt_array = dirt.split("\n")
 raw_dirt = ""
 for line in dirt_array:
     raw_dirt += line[1:] + "\n"
+json_text = raw_dirt.split("<dirt.json>")[1].split("</dirt.json>")[0]
 
-js = raw_dirt.split("<dirt.js>")[1].split("</dirt.js>")[0]
-html = raw_dirt.split("<dirt.html>")[1].split("</dirt.html>")[0]
-py = raw_dirt.split("<dirt.py>")[1].split("</dirt.py>")[0]
-php = raw_dirt.split("<dirt.php>")[1].split("</dirt.php>")[0]
-txt = raw_dirt.split("<dirt.txt>")[1].split("</dirt.txt>")[0]
+json_data = json.loads(json_text)
+file_names = json_data['files']
 
-with open("dirt.txt", "w") as file:
-    file.write(txt)
-with open("dirt.js", "w") as file:
-    file.write(js)
-with open("dirt.html", "w") as file:
-    file.write(html)
-with open("dirt.py", "w") as file:
-    file.write(py)
-with open("dirt.php", "w") as file:
-    file.write(php)
+for file_name in file_names:
+    file_text = raw_dirt.split("<" + file_name +">")[1].split("</" + file_name +">")[0]
+    with open(file_name, "w") as file:
+        file.write(file_text)
+
 #spore-break
 #<dirt.txt>
 #THE PURPOSE OF DIRT IS TO BUILD FULL STACK TRASH MAGIC
@@ -31,12 +25,29 @@ with open("dirt.php", "w") as file:
 #</dirt.txt>
 #<dirt.json>
 #{
-#    "files":["dirt.html","dirt.js","dirt.py","dirt.json","dirt.txt"],
-#    "feed":[],
-#    "wall":"",
-#    "knob":{
-#        "scroll_wheel":0
-#    }
+#    "files":[
+#"dirt.txt",
+#"dirt.json",
+#"dirt.js",
+#"dirt.py",
+#"dirt.php",
+#"dirt.html",
+#"load-file.php",
+#"save-file.php",
+#"delete-file.php",
+#"list-files.php",
+#"list-branches.php",
+#"delete-branch.php",
+#"create-branch.php",
+#"php.js",
+#"php.html"
+#],
+#    "feed":["FIRST POST!"],
+#    "wall":"SELF REPLICATING MEDIA MADE OF TRASH!",
+#    "url":"https://[WEB PAGE HERE]/",
+#    "icon":[],
+#    "knob":0,
+#    "slider":0
 #}</dirt.json>
 #<dirt.js>
 #const ws = new WebSocket('ws://localhost:8086');
