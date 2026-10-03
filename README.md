@@ -31,7 +31,7 @@ python dirt.py
  - [list-files.php](list-files.php)
  - [create-branch.php](create-branch.php)
  - [list-branches.php](list-branches.php)
- - [delete-branch.php](delte-branch.php)
+ - [delete-branch.php](delete-branch.php)
 
 ## FEED
 
