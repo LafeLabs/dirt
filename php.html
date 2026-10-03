@@ -18,17 +18,15 @@ ace.js is BSD license
 -->    
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.43.3/ace.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/p5@1.7.0/lib/p5.js"></script>
-<script src = "https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>   
 
-<script src="dirt.js"></script>
-<title>dirt code editor</title>
+<script src="php.js"></script>
+<title>php code editor</title>
 </head>
 <body>
 
 <div id = "lightdarkbutton" class = "button">LIGHT MODE</div>
 
-<a href=  "index.html" style = "display:none;position:absolute;right:5px;top:1.5em;font-size:2em;font-family:Arial">HOME</a>
+<a href=  "index.html" style = "position:absolute;right:5px;top:1.5em;font-size:2em;font-family:Arial">HOME</a>
 
 
 <table id = "inputtable">
@@ -42,13 +40,13 @@ ace.js is BSD license
     </tr>
 </table>
 
-
 <div id="maineditor" contenteditable="true" spellcheck="false"></div>
 
-<div id="p5-canvas-container"></div>
-  
+
 <div id = "filescroll">
+
 </div>
+
 <script>
 
 
@@ -61,8 +59,7 @@ editor.$blockScrolling = Infinity;
 editor.setTheme("ace/theme/vibrant_ink");
 editor.setOption("useWorker", false);
 
-
-currentFile = "dirt.html";
+currentFile = "php.html";
 
 
 load_file(currentFile).then(
@@ -128,13 +125,10 @@ list_files().then(files => {
 });
 
 
-deleteMode = true;
-
-
 document.getElementById("currentfilename").innerHTML = currentFile;
 
 document.getElementById("maineditor").onkeyup = function(){
-    data = editor.getSession().getValue();
+    data = encodeURIComponent(editor.getSession().getValue());
     save_file(currentFile,data);
     var fileType = currentFile.split("/")[0]; 
     var fileName = currentFile.split("/")[1];
@@ -147,8 +141,6 @@ document.getElementById("newscrollinput").style.color = "white";
 
 editor.setTheme("ace/theme/vibrant_ink");
 
-
-
 document.getElementById("newscrollinput").value = "";
 
 name = "";
@@ -158,7 +150,7 @@ document.getElementById("newscrollinput").onchange = function(){
     scroll = editor.getSession().getValue();
     setMode();
     editor.setValue(scroll);  
-    data = scroll;
+    data = encodeURIComponent(scroll);
 
     save_file(currentFile,data);
 
@@ -295,8 +287,6 @@ a{
 }
 body{
     overflow:hidden;
-        font-family:Arial;
-
 }
 input{
     font-family:Arial;

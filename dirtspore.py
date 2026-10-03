@@ -28,7 +28,16 @@ with open("dirt.php", "w") as file:
 #<dirt.txt>
 #THE PURPOSE OF DIRT IS TO BUILD FULL STACK TRASH MAGIC
 #THE PURPOSE OF TRASH MAGIC IS TO BUILD A GLOBAL NETWORK WHICH DELIVERS EVERYTHING FREE TO EVERYONE EVERYWHERE RIGHT NOW USING ONLY TRASH AND WHAT IS GROWN LOCALLY AND LOCAL ENERGY OF THE SUN, THE MOON, AND THE LIVING EARTH
-#<dirt.txt>
+#</dirt.txt>
+#<dirt.json>
+#{
+#    "files":["dirt.html","dirt.js","dirt.py","dirt.json","dirt.txt"],
+#    "feed":[],
+#    "wall":"",
+#    "knob":{
+#        "scroll_wheel":0
+#    }
+#}</dirt.json>
 #<dirt.js>
 #const ws = new WebSocket('ws://localhost:8086');
 #const pendingRequests = new Map();
@@ -314,9 +323,11 @@ with open("dirt.php", "w") as file:
 #    </tr>
 #</table>
 #
+#
 #<div id="maineditor" contenteditable="true" spellcheck="false"></div>
 #
-#
+#<div id="p5-canvas-container"></div>
+#  
 #<div id = "filescroll">
 #</div>
 #<script>
@@ -398,10 +409,529 @@ with open("dirt.php", "w") as file:
 #});
 #
 #
+#deleteMode = true;
+#
+#
 #document.getElementById("currentfilename").innerHTML = currentFile;
 #
 #document.getElementById("maineditor").onkeyup = function(){
 #    data = editor.getSession().getValue();
+#    save_file(currentFile,data);
+#    var fileType = currentFile.split("/")[0]; 
+#    var fileName = currentFile.split("/")[1];
+#}
+#
+#document.body.style.backgroundColor = "#202020";
+#document.body.style.color = "white";
+#document.getElementById("newscrollinput").style.backgroundColor = "#202020";
+#document.getElementById("newscrollinput").style.color = "white";        
+#
+#editor.setTheme("ace/theme/vibrant_ink");
+#
+#
+#
+#document.getElementById("newscrollinput").value = "";
+#
+#name = "";
+#document.getElementById("newscrollinput").onchange = function(){
+#    name = this.value;
+#    currentFile = name;
+#    scroll = editor.getSession().getValue();
+#    setMode();
+#    editor.setValue(scroll);  
+#    data = scroll;
+#
+#    save_file(currentFile,data);
+#
+#
+#    addcodelink(name);
+#    document.getElementById("currentfilename").innerHTML = currentFile;
+#
+#}
+#
+#
+#function addcodelink(codename){
+#    var newscrollbutton = document.createElement("div");
+#    newscrollbutton.classList.add("file");
+#    newscrollbutton.classList.add("html");
+#    newscrollbutton.innerHTML = codename;
+#    document.getElementById("filescroll").appendChild(newscrollbutton);
+#    newscrollbutton.onclick = function(){
+#        currentFile = this.innerHTML;
+#        //use php script to load current file;
+#
+#
+#        load_file(currentFile).then(
+#            filedata => {
+#                setMode();
+#                editor.setValue(filedata);
+#                var fileType = currentFile.split("/")[0]; 
+#                var fileName = currentFile.split("/")[1];
+#                document.getElementById("newscrollinput").value = fileName;
+#            }
+#        );
+#        
+#        document.getElementById("currentfilename").innerHTML = currentFile;
+#                
+#    }
+#}
+#
+#
+#function setMode() {
+#  // Extract everything after the last dot, converted to lowercase
+#  const ext = currentFile.slice(currentFile.lastIndexOf('.')).toLowerCase();
+#
+#  // Define a map of extensions to Ace Editor modes
+#  const modeMap = {
+#    '.py': 'python',
+#    '.txt': 'text',
+#    '.md': 'markdown',
+#    '.tex': 'latex',
+#    '.js': 'javascript',
+#    '.ino': 'java',
+#    '.css': 'css',
+#    '.php': 'php',
+#    '.html': 'html',
+#    '.json': 'json',
+#    '.bat': 'batchfile',
+#    '.sh': 'sh'
+#  };
+#
+#  // Look up the mode, defaulting to 'text' if the extension isn't found
+#  const mode = modeMap[ext] || 'text';
+#  
+#  editor.getSession().setMode(`ace/mode/${mode}`);
+#}
+#
+#lightmode = false;
+#
+#document.getElementById("lightdarkbutton").onclick = function(){
+#    lightmode = !lightmode;
+#    if(lightmode){
+#        document.getElementById("lightdarkbutton").style.color = "black";
+#        document.getElementById("lightdarkbutton").style.borderColor = "black";
+#        
+#        document.getElementById("filescroll").style.backgroundColor = "white";
+#
+#        document.getElementById("filescroll").style.color = "black";        
+#        document.getElementById("currentfilename").style.backgroundColor = "#eeeeee";
+#        document.getElementById("currentfilename").style.color = "black";
+#        document.getElementById("newscrollinput").style.color = "black";
+#        document.getElementById("newscrollinput").style.backgroundColor = "white";
+#        document.body.style.backgroundColor = "#b0b0b0";
+#        document.body.style.color = "black";
+#        document.getElementById("lightdarkbutton").innerHTML = "DARK MODE";
+#        editor.setTheme("ace/theme/github");
+#
+#        var links = document.getElementsByTagName("a");
+#        for(var index = 0;index < links.length;index++){
+#            links[index].style.color = "blue";
+#        }
+#    }
+#    else{
+#        
+#        document.getElementById("lightdarkbutton").style.color = "white";
+#        document.getElementById("lightdarkbutton").style.borderColor = "white";
+#        
+#        document.body.style.backgroundColor = "#404040";
+#        document.body.style.color = "white";
+#
+#        document.getElementById("filescroll").style.backgroundColor = "#101010";        
+#        document.getElementById("filescroll").style.color = "white";        
+#        
+#        document.getElementById("currentfilename").style.backgroundColor = "#101010";        
+#        document.getElementById("currentfilename").style.color = "white"
+#        document.getElementById("newscrollinput").style.color = "white";
+#        document.getElementById("newscrollinput").style.backgroundColor = "black";        
+#        document.getElementById("lightdarkbutton").innerHTML = "LIGHT MODE";        
+#        editor.setTheme("ace/theme/vibrant_ink");
+#
+#        var links = document.getElementsByTagName("a");
+#        for(var index = 0;index < links.length;index++){
+#            links[index].style.color = "#ff2cb4";
+#        }        
+#    }
+#}
+#</script>
+#<style>
+#a{
+#    color:#ff2cb4;
+#}
+##inputtable{
+#    position:absolute;
+#    left:10px;
+#    top:10px;
+#    font-size:1.5em;
+#    font-family:Arial;
+#}
+##newscrollinput{
+#    font-family:courier;
+#    
+#}
+##linktable{
+#    position:absolute;
+#    right:10px;
+#    top:10px;
+#    background-color:#808080;
+#}
+#body{
+#    overflow:hidden;
+#        font-family:Arial;
+#
+#}
+#input{
+#    font-family:Arial;
+#    color:white;
+#}
+#
+#.file{
+#    cursor:pointer;
+#    border-radius:0.25em;
+#    border:solid;
+#    padding:0.25em 0.25em 0.25em 0.25em;
+#}
+#.files:hover{
+#    background-color:green;
+#}
+#.files:active{
+#    background-color:yellow;
+#}
+##filescroll{
+#    position:absolute;
+#    overflow:scroll;
+#    top:250px;
+#    bottom:0%;
+#    right:0%;
+#    left:75%;
+#    border:solid;
+#    border-radius:5px;
+#    border-width:3px;
+#    font-family:Arial;
+#    font-size:22px;
+#    z-index:99999999;
+#}
+##maineditor{
+#    position:absolute;  
+#    left:0%;
+#    top:150px;
+#    bottom:1em;
+#    right:30%;
+#    font-size:22px;
+#    border:solid;
+#    border-color:black;
+#}
+#.button{
+#    cursor:pointer;
+#}
+#.button:hover{
+#    background-color:green;
+#}
+#.button:active{
+#    background-color:yellow;
+#}
+##lightdarkbutton{
+#    position:absolute;
+#    right:0px;
+#    top:0px;
+#    right:5px;
+#    top:5px;
+#    text-align:center;
+#    border:solid;
+#    border-radius:3px;
+#    font-size:2em;
+#    border-color:white;
+#    color:white;
+#    font-family:Arial;
+#}
+#</style>
+#
+#</body>
+#</html></dirt.html>
+#<load-file.php>
+#<?php
+#$filename = $_REQUEST["filename"];//filename
+#$data = file_get_contents($filename);//get contents of file
+#echo $data;//print contents
+#?></load-file.php>
+#<save-file.php>
+#<?php
+#    $data = $_POST["data"]; //get data 
+#    $filename = $_POST["filename"];//get filename
+#    $file = fopen($filename,"w");// create new file with this name
+#    fwrite($file,$data); //write data to file
+#    fclose($file);  //close file
+#?></save-file.php>
+#<delete-file.php>
+# <?php
+#    $filename = $_POST["filename"];
+#    unlink($filename);
+#?></delete-file.php>
+#<list-files.php>
+#<?php
+#
+#    $directoryName = isset($_GET["directory"]) ? basename($_GET["directory"]) : '';
+#    $targetPath = getcwd() . '/' . $directoryName;
+#    $files = array_diff(scandir($targetPath), ['.', '..']);
+#    echo json_encode(array_values($files));
+#
+#?>
+#</list-files.php>
+#<list-branches.php>
+#<?php
+#
+#    $files = scandir(getcwd());
+#    $dirs = array_filter($files, function ($value) {
+#        return $value[0] !== '.' && is_dir($value);
+#    });
+#    echo json_encode(array_values($dirs));
+#
+#?>
+#</list-branches.php>
+#<delete-branch.php>
+#<?php
+#
+#$branchname = $_POST["branch"];//get name of branch to kill
+#
+#rrmdir($branchname);//run recursive delet function
+#
+#function rrmdir($src) {
+#    $dir = opendir($src);
+#    while(false !== ( $file = readdir($dir)) ) {
+#        if (( $file != '.' ) && ( $file != '..' )) {
+#            $full = $src . '/' . $file;
+#            if ( is_dir($full) ) {
+#                rrmdir($full);
+#            }
+#            else {
+#                unlink($full);//this is the delete command
+#            }
+#        }
+#    }
+#    closedir($dir);
+#    rmdir($src);
+#}
+#
+#
+#?></delete-branch.php>
+#<create-branch.php>
+#<?php
+#if(isset($_GET["branch"])){
+#    $branch = $_GET["branch"];
+#    mkdir($branch);
+#
+#    $targetPath = getcwd() . '/';
+#    $files = array_diff(scandir($targetPath), ['.', '..']);
+#    
+#    $code_files = [];
+#    $allowed_extensions = ['txt', 'html', 'css', 'js', 'json', 'php', 'md', 'sh', 'bat', 'ipynb', 'py'];
+#    
+#    foreach ($files as $file) {
+#        $ext = strtolower(pathinfo($file, PATHINFO_EXTENSION));
+#        if (in_array($ext, $allowed_extensions)) {
+#            $code_files[] = $file;
+#        }
+#    }
+#    
+#    foreach ($code_files as $file) {
+#        @copy($file,$branch."/".$file);
+#    }
+#    
+#}
+#?>
+#<a href = "<?php echo $branch?>/index.html"><?php echo $branch?>/index.html
+#</a>
+#<style>
+#body{
+#    font-size:3em;
+#    font-family:arial;
+#}
+#a{
+#    font-size:3em;
+#    color:blue;
+#}
+#</style></create-branch.php>
+#<php.js>
+#
+#function load_file(name) {
+#    return fetch('load-file.php?filename=' + name).then(res => res.text());
+#}
+#
+#
+#function save_file(name,data){
+#    fetch('save-file.php', {
+#        method: 'POST',
+#        headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8' },
+#        body: 'data=' + data + '&filename=' + name
+#    });
+#}
+#
+#function delete_file(name){
+#    fetch('delete-file.php', {
+#        method: 'POST',
+#        headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8' },
+#        body: 'filename=' + name
+#    });    
+#}
+#
+#
+#function delete_branch(name){
+#    fetch('delete-branch.php', {
+#        method: 'POST',
+#        headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8' },
+#        body: 'branch=' + name
+#    });
+#}
+#
+#function list_files(fork) {
+#    var query = fork ? '?directory=' + encodeURIComponent(fork) : '';
+#    return fetch('list-files.php' + query)
+#        .then(res => res.json())
+#        .then(files => {
+#            return files; 
+#        });
+#}
+#
+#function list_branches(){
+#    return fetch('list-branches.php')
+#    .then(res => res.json())
+#    .then(branches => {
+#        return branches; 
+#    });
+#}
+#
+#</php.js>
+#<php.html>
+# <!doctype html>
+#<html>
+#<head>
+# <!-- 
+#edit files in .html, .js, .json, .css, .php, .py, .txt,  and .md
+#-->
+#
+#    <link href="data:image/x-icon;base64,AAABAAEAEBAQAAEABAAoAQAAFgAAACgAAAAQAAAAIAAAAAEABAAAAAAAgAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAB/3gAA//8AAPb/AAD//wAA//8AAP/7AAD/3wAA3/8AAP7/AAD//wAA//8AAP93AADv/wAA//8AAP//AAB+/gAA" rel="icon" type="image/x-icon">
+#    
+#<!--
+#ace.js project home:
+#https://ace.c9.io/
+#
+#list of languages:
+#https://cloud9-sdk.readme.io/docs/language-mode
+#ace.js is BSD license
+#
+#-->    
+#
+#<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.43.3/ace.js"></script>
+#
+#<script src="php.js"></script>
+#<title>php code editor</title>
+#</head>
+#<body>
+#
+#<div id = "lightdarkbutton" class = "button">LIGHT MODE</div>
+#
+#<a href=  "index.html" style = "position:absolute;right:5px;top:1.5em;font-size:2em;font-family:Arial">HOME</a>
+#
+#
+#<table id = "inputtable">
+#    <tr>
+#        <td>Current File Name:</td>
+#        <td id = "currentfilename"></td>
+#    </tr>
+#    <tr>
+#        <td>New File Name(end with .html, .js, .css, .py, .bat, .json, .php, .md, .txt):</td>
+#        <td><input id = "newscrollinput"/></td>
+#    </tr>
+#</table>
+#
+#<div id="maineditor" contenteditable="true" spellcheck="false"></div>
+#
+#
+#<div id = "filescroll">
+#
+#</div>
+#
+#<script>
+#
+#
+#editor = ace.edit("maineditor");
+#editor.setTheme("ace/theme/github");
+#//editor.setTheme("ace/theme/vibrant_ink");
+#editor.getSession().setMode("ace/mode/html");
+#editor.getSession().setUseWrapMode(true);
+#editor.$blockScrolling = Infinity;
+#editor.setTheme("ace/theme/vibrant_ink");
+#editor.setOption("useWorker", false);
+#
+#currentFile = "php.html";
+#
+#
+#load_file(currentFile).then(
+#    filedata => {
+#        setMode();
+#        editor.setValue(filedata);
+#        document.getElementById("currentfilename").innerHTML = currentFile;
+#    }
+#);
+#
+#
+#scrolls = [];
+#
+#list_files().then(files => {
+#    scrolls = files;
+#    for(var index = 0;index < scrolls.length;index++) {    
+#        if(scrolls[index].substring(scrolls[index].length-5,scrolls[index].length) == ".html" || scrolls[index].substring(scrolls[index].length-4,scrolls[index].length) == ".txt" || scrolls[index].substring(scrolls[index].length-4,scrolls[index].length) == ".css" || scrolls[index].substring(scrolls[index].length-4,scrolls[index].length) == ".php" || scrolls[index].substring(scrolls[index].length-3,scrolls[index].length) == ".js" ||scrolls[index].substring(scrolls[index].length-3,scrolls[index].length) == ".py" || scrolls[index].substring(scrolls[index].length-3,scrolls[index].length) == ".md" ||    scrolls[index].substring(scrolls[index].length-5,scrolls[index].length) == ".json"|| scrolls[index].substring(scrolls[index].length-4,scrolls[index].length) == ".bat"|| scrolls[index].substring(scrolls[index].length-3,scrolls[index].length) == ".sh"){
+#     
+#        if(scrolls[index].substring(scrolls[index].length-5,scrolls[index].length) == ".html"){
+#            var newa = document.createElement("A");
+#            newa.innerHTML = scrolls[index];
+#            newa.href = scrolls[index];
+#            document.getElementById("filescroll").appendChild(newa);
+#         }             
+#        var newscrollbutton = document.createElement("div");
+#        newscrollbutton.classList.add("file");
+#        newscrollbutton.classList.add("html");
+#        if(scrolls[index].substring(scrolls[index].length-3,scrolls[index].length) == ".js"){
+#            newscrollbutton.style.borderColor = "red";
+#        }
+#        if(scrolls[index].substring(scrolls[index].length-3,scrolls[index].length) == ".md"){
+#            newscrollbutton.style.borderColor = "#0000ff80";
+#        }
+#        if(scrolls[index].substring(scrolls[index].length-4,scrolls[index].length) == ".css"){
+#            newscrollbutton.style.borderColor = "yellow";
+#        }
+#        if(scrolls[index].substring(scrolls[index].length-4,scrolls[index].length) == ".php"){
+#            newscrollbutton.style.borderColor = "purple";
+#        }
+#        newscrollbutton.innerHTML =  scrolls[index];
+#        document.getElementById("filescroll").appendChild(newscrollbutton);
+#        newscrollbutton.onclick = function(){
+#            currentFile = this.innerHTML;
+#            load_file(currentFile).then(
+#                filedata => {
+#                    setMode();
+#                    editor.setValue(filedata);
+#                    document.getElementById("currentfilename").innerHTML = currentFile;
+#                    var fileType = currentFile.split("/")[0]; 
+#                    var fileName = currentFile.split("/")[1];
+#                    //document.getElementById("newscrollinput").value = fileName;
+#                }
+#            );
+#
+#        
+#            document.getElementById("currentfilename").innerHTML = currentFile;
+#            
+#        }
+#    
+#        }
+#    }
+#
+#});
+#
+#
+#document.getElementById("currentfilename").innerHTML = currentFile;
+#
+#document.getElementById("maineditor").onkeyup = function(){
+#    data = encodeURIComponent(editor.getSession().getValue());
 #    save_file(currentFile,data);
 #    var fileType = currentFile.split("/")[0]; 
 #    var fileName = currentFile.split("/")[1];
@@ -423,7 +953,7 @@ with open("dirt.php", "w") as file:
 #    scroll = editor.getSession().getValue();
 #    setMode();
 #    editor.setValue(scroll);  
-#    data = scroll;
+#    data = encodeURIComponent(scroll);
 #
 #    save_file(currentFile,data);
 #
@@ -628,5 +1158,5 @@ with open("dirt.php", "w") as file:
 #</style>
 #
 #</body>
-#</html><dirt.html>
+#</html></php.html>
 #
