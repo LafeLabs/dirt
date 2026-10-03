@@ -5,7 +5,7 @@ curl -o dirtspore.py https://raw.githubusercontent.com/LafeLabs/dirt/refs/heads/
 python dirtspore.py
 python dirt.py
 ```
-
+ - [dirt.txt](dirt.txt)
  - [dirt.html](dirt.html)
  - [dirt.js](dirt.js)
  - [dirt.py](dirt.py)

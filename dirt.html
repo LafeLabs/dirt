@@ -18,6 +18,9 @@ ace.js is BSD license
 -->    
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.43.3/ace.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.7.0/lib/p5.js"></script>
+<script src = "https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>   
+
 <script src="dirt.js"></script>
 <title>dirt code editor</title>
 </head>
@@ -41,7 +44,8 @@ ace.js is BSD license
 
 <div id="maineditor" contenteditable="true" spellcheck="false"></div>
 
-
+<div id="p5-canvas-container"></div>
+  
 <div id = "filescroll">
 </div>
 <script>
@@ -120,6 +124,34 @@ list_files().then(files => {
         }
     }
 
+});
+
+
+deleteMode = true;
+
+branches = [];
+
+list_branches().then(branches => {
+    for (var index = 0; index < branches.length; index++) {
+
+        var newspan = document.createElement("SPAN");
+        newspan.innerHTML = branches[index];
+        var newdiv = document.createElement("DIV");
+        newdiv.appendChild(newspan);
+        newdiv.className = "death-box";
+        document.getElementById("filescroll").appendChild(newdiv);
+        if(deleteMode){
+            var deletebutton = document.createElement("SPAN");
+            deletebutton.innerHTML = "DELETE BRANCH";
+            deletebutton.className = "deletebutton";
+            newdiv.appendChild(deletebutton);
+            deletebutton.onclick = function(){
+                deadbranch = this.parentElement.getElementsByTagName("SPAN")[0].innerHTML;
+                delete_branch(deadbranch);                
+                this.parentNode.parentNode.removeChild(this.parentNode);
+            }           
+        }
+    }
 });
 
 

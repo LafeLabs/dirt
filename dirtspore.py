@@ -12,7 +12,10 @@ js = raw_dirt.split("<dirt.js>")[1].split("</dirt.js>")[0]
 html = raw_dirt.split("<dirt.html>")[1].split("</dirt.html>")[0]
 py = raw_dirt.split("<dirt.py>")[1].split("</dirt.py>")[0]
 php = raw_dirt.split("<dirt.php>")[1].split("</dirt.php>")[0]
+txt = raw_dirt.split("<dirt.txt>")[1].split("</dirt.txt>")[0]
 
+with open("dirt.txt", "w") as file:
+    file.write(txt)
 with open("dirt.js", "w") as file:
     file.write(js)
 with open("dirt.html", "w") as file:
@@ -24,7 +27,8 @@ with open("dirt.php", "w") as file:
 #spore-break
 #<dirt.txt>
 #THE PURPOSE OF DIRT IS TO BUILD FULL STACK TRASH MAGIC
-#THE PURPOSE OF TRASH MAGIC IS TO BUILD A GLOBAL NETWORK WHICH DELIVERS EVERYTHING FREE TO EVERYONE EVERYWHERE RIGHT NOW USING ONLY TRASH AND WHAT IS GROWN LOCALLY AND LOCAL ENERGY OF THE SUN, THE MOON, AND THE LIVING EARTH<dirt.txt>
+#THE PURPOSE OF TRASH MAGIC IS TO BUILD A GLOBAL NETWORK WHICH DELIVERS EVERYTHING FREE TO EVERYONE EVERYWHERE RIGHT NOW USING ONLY TRASH AND WHAT IS GROWN LOCALLY AND LOCAL ENERGY OF THE SUN, THE MOON, AND THE LIVING EARTH
+#<dirt.txt>
 #<dirt.js>
 #const ws = new WebSocket('ws://localhost:8086');
 #const pendingRequests = new Map();
@@ -286,6 +290,9 @@ with open("dirt.php", "w") as file:
 #-->    
 #
 #<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.43.3/ace.js"></script>
+#<script src="https://cdn.jsdelivr.net/npm/p5@1.7.0/lib/p5.js"></script>
+#<script src = "https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>   
+#
 #<script src="dirt.js"></script>
 #<title>dirt code editor</title>
 #</head>
