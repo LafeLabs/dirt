@@ -1,0 +1,114 @@
+<!doctype html>
+<html>
+<head>
+
+    <link href="data:image/x-icon;base64,AAABAAEAEBAQAAEABAAoAQAAFgAAACgAAAAQAAAAIAAAAAEABAAAAAAAgAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAB/3gAA//8AAPb/AAD//wAA//8AAP/7AAD/3wAA3/8AAP7/AAD//wAA//8AAP93AADv/wAA//8AAP//AAB+/gAA" rel="icon" type="image/x-icon">
+    
+<!--
+dirt cloud
+-->    
+<title>dirt cloud</title>
+<script src = "dirt.js"></script>
+</head>
+<body>
+<h1>DIRT CLOUD</h1>
+<table>
+    <tr>
+        <td>to file:</td>
+        <td>
+            <input id = "pushfile">
+        </td>
+    </tr>
+    <tr>
+        <td>to node:</td>
+        <td>
+            <input id = "pushnode">
+        </td>
+    </tr>
+    </table>
+    <table>
+    <tr>
+        <td>from file:</td>
+        <td>
+            <input id = "pullfile">
+        </td>
+    </tr>
+    <tr>
+        <td>from node:</td>
+        <td>
+            <input id = "pullnode">
+        </td>
+    </tr>
+</table>
+<span class = "button" id = "pullbutton">PULL</span>
+
+<span class = "button" id = "pushbutton">PUSH</span>
+
+<textarea id = "textio"></textarea>
+<script>
+pullfile = "wall.txt";
+pushfile = "wall.txt";
+
+pullnode = "http://localhost/dirt/";
+pushnode = "http://localhost/dirt/";
+
+document.getElementById("pullfile").value = pullfile;
+document.getElementById("pushfile").value = pushfile;
+document.getElementById("pullnode").value = pullnode;
+document.getElementById("pushnode").value = pushnode;
+
+document.getElementById("pullbutton").onclick = function(){
+    pullnode = document.getElementById("pullnode").value;
+    if(pullnode.at(-1) != "/"){
+        pullnode += "/";
+    }
+    pullfile = document.getElementById("pullfile").value;
+    url = pullnode + pullfile;
+    pull_file(url).then(
+        filedata => {
+            document.getElementById("textio").value = filedata;
+        }
+    );
+}
+
+</script>
+<style>
+body{
+     font-family: Comic Sans MS;
+  background-color: #9f8767;
+}
+input{
+      font-family: Comic Sans MS;
+  background-color: #9f8767;
+}
+#textio{
+    position:absolute;
+    left:20px;
+    bottom:20px;
+    right:20px;
+    top:200px;
+    border:solid;
+    font-family: Comic Sans MS;
+    background-color: #9f8767;
+}
+table{
+    display:inline;
+}
+.button{
+    border:solid;
+    font-size:2em;
+    padding-left:1em;
+    padding-right:1em;
+    border-radius:0.5em;
+    cursor:pointer;
+}
+.button:hover{
+    background-color:yellow;
+}
+.button:active{
+    background-color:green;
+}
+
+</style>
+</body>
+</html>

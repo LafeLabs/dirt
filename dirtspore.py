@@ -20,10 +20,8 @@ for file_name in file_names:
 
 #spore-break
 #<dirt.txt>
-#
-#THE PURPOSE OF DIRT IS TO BUILD FULL STACK TRASH MAGIC
-#THE PURPOSE OF TRASH MAGIC IS TO BUILD A GLOBAL NETWORK WHICH DELIVERS EVERYTHING FREE TO EVERYONE EVERYWHERE RIGHT NOW USING ONLY TRASH AND WHAT IS GROWN LOCALLY AND LOCAL ENERGY OF THE SUN, THE MOON, AND THE LIVING EARTH
-#</dirt.txt>
+#THE PURPOSE OF DIRT SWARM IS TO BUILD FULL STACK TRASH MAGIC
+#THE PURPOSE OF TRASH MAGIC IS TO BUILD A GLOBAL NETWORK WHICH DELIVERS EVERYTHING FREE TO EVERYONE EVERYWHERE RIGHT NOW USING ONLY TRASH AND WHAT WE GROW WITH THE LIVING EARTH AND THE MIGHTY SUN</dirt.txt>
 #<dirt.json>
 #{
 #    "files": [
@@ -52,7 +50,9 @@ for file_name in file_names:
 #        "readme.html",
 #        "icon.html",
 #        "icon.json",
-#        "icon.txt"
+#        "icon.txt",
+#        "dirtspore.php",
+#        "dirtcloud.html"
 #    ]
 #}</dirt.json>
 #<dirt.js>
@@ -209,6 +209,7 @@ for file_name in file_names:
 #                    await send_success(websocket, msg_id, "File pushed successfully")
 #                
 #                elif action == "pull_file":
+#                    import urllib.request
 #                    url = request.get("url")
 #                    with urllib.request.urlopen(url) as response:
 #                        content = response.read().decode('utf-8')
@@ -290,7 +291,6 @@ for file_name in file_names:
 #    except KeyboardInterrupt:
 #        pass</dirt.py>
 #<dirt.php>
-#
 #<?php
 #    $data = $_GET["data"]; //get data 
 #    $filename = $_GET["file"];//get filename
@@ -299,8 +299,7 @@ for file_name in file_names:
 #    fclose($file);  //close file
 #?></dirt.php>
 #<dirt.html>
-#
-# <!doctype html>
+#<!doctype html>
 #<html>
 #<head>
 # <!-- 
@@ -831,6 +830,7 @@ for file_name in file_names:
 #</php.js>
 #<php.html>
 #
+#
 # <!doctype html>
 #<html>
 #<head>
@@ -1190,7 +1190,6 @@ for file_name in file_names:
 #</body>
 #</html></php.html>
 #<feed.html>
-#
 #<!doctype html>
 #<html>
 #<head>
@@ -2285,4 +2284,146 @@ for file_name in file_names:
 #]</icon.json>
 #<icon.txt>
 #MIGHTY SUN! SOL INVICTUS!</icon.txt>
+#<dirtspore.php>
+#<?php
+#$dirtspore = file_get_contents("dirtspore.py");
+#
+#$dirt = explode("#spore-break", $dirtspore)[2];
+#
+#$dirt_array = explode("\n", $dirt);
+#
+#$raw_dirt = "";
+#foreach ($dirt_array as $line) {
+#    if (strlen($line) > 0) {
+#        $raw_dirt .= substr($line, 1) . "\n";
+#    }
+#}
+#
+#$json_text = explode("</dirt.json>", explode("<dirt.json>", $raw_dirt)[1])[0];
+#
+#$json_data = json_decode($json_text, true);
+#
+#$file_names = $json_data['files'];
+#
+#foreach ($file_names as $file_name) {
+#    $file_text = explode("</" . $file_name . ">", explode("<" . $file_name . ">", $raw_dirt)[1])[0];
+#    file_put_contents($file_name, $file_text);
+#}
+#?>
+#</dirtspore.php>
+#<dirtcloud.html>
+#<!doctype html>
+#<html>
+#<head>
+#
+#    <link href="data:image/x-icon;base64,AAABAAEAEBAQAAEABAAoAQAAFgAAACgAAAAQAAAAIAAAAAEABAAAAAAAgAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAB/3gAA//8AAPb/AAD//wAA//8AAP/7AAD/3wAA3/8AAP7/AAD//wAA//8AAP93AADv/wAA//8AAP//AAB+/gAA" rel="icon" type="image/x-icon">
+#    
+#<!--
+#dirt cloud
+#-->    
+#<title>dirt cloud</title>
+#<script src = "dirt.js"></script>
+#</head>
+#<body>
+#<h1>DIRT CLOUD</h1>
+#<table>
+#    <tr>
+#        <td>to file:</td>
+#        <td>
+#            <input id = "pushfile">
+#        </td>
+#    </tr>
+#    <tr>
+#        <td>to node:</td>
+#        <td>
+#            <input id = "pushnode">
+#        </td>
+#    </tr>
+#    </table>
+#    <table>
+#    <tr>
+#        <td>from file:</td>
+#        <td>
+#            <input id = "pullfile">
+#        </td>
+#    </tr>
+#    <tr>
+#        <td>from node:</td>
+#        <td>
+#            <input id = "pullnode">
+#        </td>
+#    </tr>
+#</table>
+#<span class = "button" id = "pullbutton">PULL</span>
+#
+#<span class = "button" id = "pushbutton">PUSH</span>
+#
+#<textarea id = "textio"></textarea>
+#<script>
+#pullfile = "wall.txt";
+#pushfile = "wall.txt";
+#
+#pullnode = "http://localhost/dirt/";
+#pushnode = "http://localhost/dirt/";
+#
+#document.getElementById("pullfile").value = pullfile;
+#document.getElementById("pushfile").value = pushfile;
+#document.getElementById("pullnode").value = pullnode;
+#document.getElementById("pushnode").value = pushnode;
+#
+#document.getElementById("pullbutton").onclick = function(){
+#    pullnode = document.getElementById("pullnode").value;
+#    if(pullnode.at(-1) != "/"){
+#        pullnode += "/";
+#    }
+#    pullfile = document.getElementById("pullfile").value;
+#    url = pullnode + pullfile;
+#    pull_file(url).then(
+#        filedata => {
+#            document.getElementById("textio").value = filedata;
+#        }
+#    );
+#}
+#
+#</script>
+#<style>
+#body{
+#     font-family: Comic Sans MS;
+#  background-color: #9f8767;
+#}
+#input{
+#      font-family: Comic Sans MS;
+#  background-color: #9f8767;
+#}
+##textio{
+#    position:absolute;
+#    left:20px;
+#    bottom:20px;
+#    right:20px;
+#    top:200px;
+#    border:solid;
+#    font-family: Comic Sans MS;
+#    background-color: #9f8767;
+#}
+#table{
+#    display:inline;
+#}
+#.button{
+#    border:solid;
+#    font-size:2em;
+#    padding-left:1em;
+#    padding-right:1em;
+#    border-radius:0.5em;
+#    cursor:pointer;
+#}
+#.button:hover{
+#    background-color:yellow;
+#}
+#.button:active{
+#    background-color:green;
+#}
+#
+#</style>
+#</body>
+#</html></dirtcloud.html>
 #

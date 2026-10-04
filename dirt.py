@@ -59,6 +59,7 @@ async def handle_client(websocket):
                     await send_success(websocket, msg_id, "File pushed successfully")
                 
                 elif action == "pull_file":
+                    import urllib.request
                     url = request.get("url")
                     with urllib.request.urlopen(url) as response:
                         content = response.read().decode('utf-8')

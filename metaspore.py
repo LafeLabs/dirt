@@ -31,7 +31,9 @@ files = [
         "readme.html",
         "icon.html",
         "icon.json",
-        "icon.txt"
+        "icon.txt",
+        "dirtspore.php",
+        "dirtcloud.html"
 ]
 
 json_data['files'] = files
