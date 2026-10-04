@@ -2361,8 +2361,7 @@ for file_name in file_names:
 #<textarea id = "textio"></textarea>
 #<script>
 #pullfile = "wall.txt";
-#pushfile = "wall.txt";
-#
+#pushfile = "dirtcloud.txt";
 #pullnode = "http://localhost/dirt/";
 #pushnode = "http://localhost/dirt/";
 #
@@ -2383,6 +2382,17 @@ for file_name in file_names:
 #            document.getElementById("textio").value = filedata;
 #        }
 #    );
+#}
+#
+#document.getElementById("pushbutton").onclick = function(){
+#    pushfile = document.getElementById("pushfile").value;
+#    filedata = document.getElementById("textio").value;
+#    pushnode = document.getElementById("pushnode").value;
+#    if(pushnode.at(-1) != "/"){
+#        pushnode += "/";
+#    }
+#    dirt_php = pushnode + "dirt.php";
+#    push_file(dirt_php, pushfile, filedata)
 #}
 #
 #</script>
