@@ -1,27 +1,32 @@
 import json
+
 with open("dirtspore.py", "r") as file:
-    dirtspore = file.read()
+    dirtspore = file.read().replace("\r", "")
 
-dirt = dirtspore.split("#spore-break")[2]
-
+dirt = dirtspore.split("########SPORE-BREAK-SPORE-BREAK-SPORE-BREAK")[2]
 dirt_array = dirt.split("\n")
 raw_dirt = ""
+
 for line in dirt_array:
     raw_dirt += line[1:] + "\n"
-json_text = raw_dirt.split("<dirt.json>")[1].split("</dirt.json>")[0]
 
+json_text = raw_dirt.split("<dirt.json>")[1].split("</dirt.json>")[0]
 json_data = json.loads(json_text)
 file_names = json_data['files']
 
 for file_name in file_names:
-    file_text = raw_dirt.split("<" + file_name +">")[1].split("</" + file_name +">")[0]
-    with open(file_name, "w") as file:
-        file.write(file_text)
+    if len(file_name) > 0:
+        file_text = raw_dirt.split("<" + file_name + ">")[1].split("</" + file_name + ">")[0]
+        with open(file_name, "w") as file:
+            file.write(file_text)
 
-#spore-break
+########SPORE-BREAK-SPORE-BREAK-SPORE-BREAK
+#
 #<dirt.txt>
 #THE PURPOSE OF DIRT SWARM IS TO BUILD FULL STACK TRASH MAGIC
-#THE PURPOSE OF TRASH MAGIC IS TO BUILD A GLOBAL NETWORK WHICH DELIVERS EVERYTHING FREE TO EVERYONE EVERYWHERE RIGHT NOW USING ONLY TRASH AND WHAT WE GROW WITH THE LIVING EARTH AND THE MIGHTY SUN</dirt.txt>
+#THE PURPOSE OF TRASH MAGIC IS TO BUILD A GLOBAL NETWORK WHICH DELIVERS EVERYTHING FREE TO EVERYONE EVERYWHERE RIGHT NOW USING ONLY TRASH AND WHAT WE GROW WITH THE LIVING EARTH AND THE MIGHTY SUN
+#</dirt.txt>
+#
 #<dirt.json>
 #{
 #    "files": [
@@ -54,7 +59,9 @@ for file_name in file_names:
 #        "dirtspore.php",
 #        "dirtcloud.html"
 #    ]
-#}</dirt.json>
+#}
+#</dirt.json>
+#
 #<dirt.js>
 #
 #const ws = new WebSocket('ws://localhost:8086');
@@ -146,7 +153,9 @@ for file_name in file_names:
 #function list_branches() { 
 #    return sendWebSocketMessage('list_branches', {}); 
 #}
+#
 #</dirt.js>
+#
 #<dirt.py>
 #
 #import asyncio
@@ -289,7 +298,9 @@ for file_name in file_names:
 #    try:
 #        asyncio.run(main())
 #    except KeyboardInterrupt:
-#        pass</dirt.py>
+#        pass
+#</dirt.py>
+#
 #<dirt.php>
 #<?php
 #    $data = $_GET["data"]; //get data 
@@ -297,7 +308,9 @@ for file_name in file_names:
 #    $file = fopen($filename,"w");// create new file with this name
 #    fwrite($file,$data); //write data to file
 #    fclose($file);  //close file
-#?></dirt.php>
+#?>
+#</dirt.php>
+#
 #<dirt.html>
 #<!doctype html>
 #<html>
@@ -666,14 +679,18 @@ for file_name in file_names:
 #</style>
 #
 #</body>
-#</html></dirt.html>
+#</html>
+#</dirt.html>
+#
 #<load-file.php>
 #
 #<?php
 #$filename = $_REQUEST["filename"];//filename
 #$data = file_get_contents($filename);//get contents of file
 #echo $data;//print contents
-#?></load-file.php>
+#?>
+#</load-file.php>
+#
 #<save-file.php>
 #
 #<?php
@@ -682,13 +699,17 @@ for file_name in file_names:
 #    $file = fopen($filename,"w");// create new file with this name
 #    fwrite($file,$data); //write data to file
 #    fclose($file);  //close file
-#?></save-file.php>
+#?>
+#</save-file.php>
+#
 #<delete-file.php>
 #
 # <?php
 #    $filename = $_POST["filename"];
 #    unlink($filename);
-#?></delete-file.php>
+#?>
+#</delete-file.php>
+#
 #<list-files.php>
 #
 #<?php
@@ -699,7 +720,9 @@ for file_name in file_names:
 #    echo json_encode(array_values($files));
 #
 #?>
+#
 #</list-files.php>
+#
 #<list-branches.php>
 #
 #<?php
@@ -711,7 +734,9 @@ for file_name in file_names:
 #    echo json_encode(array_values($dirs));
 #
 #?>
+#
 #</list-branches.php>
+#
 #<delete-branch.php>
 #
 #<?php
@@ -738,7 +763,9 @@ for file_name in file_names:
 #}
 #
 #
-#?></delete-branch.php>
+#?>
+#</delete-branch.php>
+#
 #<create-branch.php>
 #
 #<?php
@@ -776,7 +803,9 @@ for file_name in file_names:
 #    font-size:3em;
 #    color:blue;
 #}
-#</style></create-branch.php>
+#</style>
+#</create-branch.php>
+#
 #<php.js>
 #
 #
@@ -827,7 +856,9 @@ for file_name in file_names:
 #    });
 #}
 #
+#
 #</php.js>
+#
 #<php.html>
 #
 #
@@ -1188,7 +1219,9 @@ for file_name in file_names:
 #</style>
 #
 #</body>
-#</html></php.html>
+#</html>
+#</php.html>
+#
 #<feed.html>
 #<!doctype html>
 #<html>
@@ -1206,7 +1239,9 @@ for file_name in file_names:
 #    <div id = "clear">CLEAR</div>
 #    <script src="feed.js"></script>
 #</body>
-#</html></feed.html>
+#</html>
+#</feed.html>
+#
 #<feed.js>
 #
 #codesquaresize = 150;
@@ -1316,7 +1351,9 @@ for file_name in file_names:
 #    });
 #}
 #
+#
 #</feed.js>
+#
 #<feed.css>
 #
 #body{
@@ -1371,12 +1408,16 @@ for file_name in file_names:
 #.delete-button:hover{
 #    background-color:#400000;
 #}
+#
 #</feed.css>
+#
 #<feed.json>
 #[
 #   "SECOND POST",
 #   "FIRST POST"
-#]</feed.json>
+#]
+#</feed.json>
+#
 #<wall.html>
 #<!doctype html>
 #<html lang="en">
@@ -1484,9 +1525,13 @@ for file_name in file_names:
 #
 #</style>
 #</body>
-#</html></wall.html>
+#</html>
+#</wall.html>
+#
 #<wall.txt>
-#WE ARE ALL JUST BRICKS IN THE WALL</wall.txt>
+#WE ARE ALL JUST BRICKS IN THE WALL
+#</wall.txt>
+#
 #<README.md>
 ## dirt
 #
@@ -1496,7 +1541,9 @@ for file_name in file_names:
 #python dirt.py
 #```
 #
-### [dirtspore.py](dirtspore.py)</README.md>
+### [dirtspore.py](dirtspore.py)
+#</README.md>
+#
 #<readme.html>
 # <!doctype html>
 #<html>
@@ -1690,7 +1737,9 @@ for file_name in file_names:
 #</style>
 #
 #</body>
-#</html></readme.html>
+#</html>
+#</readme.html>
+#
 #<icon.html>
 #<!doctype html>
 #<html lang="en">
@@ -1898,7 +1947,9 @@ for file_name in file_names:
 #
 #</style>
 #</body>
-#</html></icon.html>
+#</html>
+#</icon.html>
+#
 #<icon.json>
 #[
 #    [
@@ -2281,9 +2332,13 @@ for file_name in file_names:
 #            "y": 464
 #        }
 #    ]
-#]</icon.json>
+#]
+#</icon.json>
+#
 #<icon.txt>
-#MIGHTY SUN! SOL INVICTUS!</icon.txt>
+#MIGHTY SUN! SOL INVICTUS!
+#</icon.txt>
+#
 #<dirtspore.php>
 #<?php
 #$dirtspore = file_get_contents("dirtspore.py");
@@ -2310,7 +2365,9 @@ for file_name in file_names:
 #    file_put_contents($file_name, $file_text);
 #}
 #?>
+#
 #</dirtspore.php>
+#
 #<dirtcloud.html>
 #<!doctype html>
 #<html>
@@ -2435,5 +2492,6 @@ for file_name in file_names:
 #
 #</style>
 #</body>
-#</html></dirtcloud.html>
+#</html>
+#</dirtcloud.html>
 #

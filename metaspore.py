@@ -44,10 +44,10 @@ with open("dirt.json", "w") as file:
 text = ""
 
 for filename in files:
-    text = text + "<" + filename + ">\n";
+    text = text + "\n<" + filename + ">\n";
     with open(filename, "r") as file:
         text = text + file.read()
-    text = text + "</" + filename + ">\n";
+    text = text + "\n</" + filename + ">\n";
     
 text_array = text.split("\n")
 
@@ -59,5 +59,6 @@ with open("spore.py", "r") as file:
     spore_code =  file.read()
 
 with open("dirtspore.py", "w") as file:
-    file.write(spore_code + "\n#spore-break\n" + comment_text)
+    file.write(spore_code + "\n########SPORE-BREAK-SPORE-BREAK-SPORE-BREAK\n" + comment_text)
+    
     
