@@ -1,0 +1,285 @@
+<!doctype html>
+<html>
+<head>
+    <link href="data:image/x-icon;base64,AAABAAEAEBAQAAEABAAoAQAAFgAAACgAAAAQAAAAIAAAAAEABAAAAAAAgAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAB/3gAA//8AAPb/AAD//wAA//8AAP/7AAD/3wAA3/8AAP7/AAD//wAA//8AAP93AADv/wAA//8AAP//AAB+/gAA" rel="icon" type="image/x-icon">
+<title>dicekey</title>
+</head>
+<body>
+<p>TO CREATE A KEY ROLL 10 SIX SIDED DICE TEN TIMES TO GET TEN SETS OF TEN NUMBERS FROM 1 THRU 6</p>
+<table id = "dicetable">
+</table>
+<div class = "button" id  = "keybutton">GENERATE KEY</div>
+<table>
+    <tr>
+        <td>PRIVATE KEY:</td>
+        <td>
+            <input id = "private">
+        </td>
+    </tr>
+    <tr>
+        <td>PUBLIC KEY:</td>
+        <td>
+            <input id = "public">
+        </td>
+    </tr>
+</table>
+<H1>ENTER JSON:</H1>
+<textarea id = "json"></textarea>
+<div class = "button" id  = "signjsonbutton">SIGN JSON</div>
+<input id = "signature"></input>
+
+<script>
+diceInputs = [];
+for(let index = 0;index < 10;index++){
+    let newtr= document.createElement("tr");
+    let newtd= document.createElement("td");
+    newtd.innerHTML = "D6x10[" + (index + 1).toString() +"]";
+    newtr.appendChild(newtd);
+    let newtd2 = document.createElement("tr");
+    newtr.appendChild(newtd2);
+    let newinput= document.createElement("input");
+    //newinput.value = "1234561234";
+    newinput.value = "";
+
+    newtd2.appendChild(newinput);
+    document.getElementById("dicetable").appendChild(newtr);
+    diceInputs.push(newinput);
+}
+
+document.getElementById("private").value = "";
+document.getElementById("signature").value = "";
+document.getElementById("public").value = "";
+document.getElementById("json").value = '{}';
+
+document.getElementById("keybutton").onclick = function(){
+    allDiceRolled = true;
+    for(let index = 0;index < 10;index++){
+        if(diceInputs[index].value.length != 10){
+            allDiceRolled = false;
+        }
+    }
+    if(allDiceRolled){
+        rolls = [];
+        for(let rowIndex = 0;rowIndex < 10;rowIndex++){
+            rowString = diceInputs[rowIndex].value;
+            for(let columnIndex = 0;columnIndex < 10;columnIndex++){
+                rolls.push(rowString.charAt(columnIndex));
+            }
+        }
+        const keys = generateKeyFormats(rolls);
+        document.getElementById("private").value = keys.hex;
+        document.getElementById("public").value = derivePublicHex(keys.hex);
+    }
+    else{
+        alert("roll more dice and enter numbers in inputs(100 total)");
+    }
+}
+
+document.getElementById("signjsonbutton").onclick = async function() {
+    const privHex = document.getElementById("private").value;
+    const pubHex = document.getElementById("public").value;
+    const rawJsonText = document.getElementById("json").value;
+    
+    if(!privHex || !pubHex) {
+        alert("Generate your keys first by rolling dice and pressing key button");
+        return;
+    }
+    
+    try {
+        let payload = JSON.parse(rawJsonText);
+        payload.signature = "";
+        
+        const stringToSign = JSON.stringify(payload, Object.keys(payload).sort());
+        const sigHex = await signMessage(privHex, pubHex, stringToSign);
+        
+        document.getElementById("signature").value = sigHex;
+        payload.signature = sigHex;
+        document.getElementById("json").value = JSON.stringify(payload, null, 2);
+    } catch(e) {
+        alert("Invalid JSON format. Check your structural syntax formatting.");
+    }
+}
+
+function generateKeyFormats(rolls) {
+  let stateValue = 0n;
+  for (let i = 0; i < rolls.length; i++) {
+    const digit = BigInt(rolls[i] - 1);
+    stateValue = (stateValue * 6n) + digit;
+  }
+
+  let hexString = stateValue.toString(16).toUpperCase();
+  while (hexString.length < 64) {
+    hexString = '0' + hexString;
+  }
+
+  const bytes = [];
+  let tempHex = hexString;
+  while (tempHex.length > 0) {
+    bytes.push(parseInt(tempHex.substring(0, 2), 16));
+    tempHex = tempHex.substring(2);
+  }
+  const binaryString = String.fromCharCode.apply(null, bytes);
+  const base64String = btoa(binaryString);
+
+  return {
+    hex: hexString,
+    base64: base64String
+  };
+}
+
+const P = 2n ** 255n - 19n;
+const L = 2n ** 252n + 27742317777372353535851937790883648493n;
+const D = 37095705934669439343138083508754565189542113879843219016388785533085940283555n;
+const I = 19681161376707505956564822541421478850064329381734267527632683831895014619373n;
+
+function inv(a) {
+  return powMod(a, P - 2n, P);
+}
+
+function powMod(base, exp, mod) {
+  let res = 1n;
+  base = base % mod;
+  while (exp > 0n) {
+    if (exp % 2n === 1n) res = (res * base) % mod;
+    base = (base * base) % mod;
+    exp = exp / 2n;
+  }
+  return res;
+}
+
+function edwardsAdd(P1, P2) {
+  const [x1, y1] = P1;
+  const [x2, y2] = P2;
+  const d_x1x2y1y2 = (D * x1 * x2 * y1 * y2) % P;
+  const x3 = ((x1 * y2 + y1 * x2) * inv(1n + d_x1x2y1y2)) % P;
+  const y3 = ((y1 * y2 + x1 * x2) * inv(1n - d_x1x2y1y2)) % P;
+  return [(x3 + P) % P, (y3 + P) % P];
+}
+
+function edwardsScalarMul(Q, scalar) {
+  let res = [0n, 1n];
+  let base = Q;
+  while (scalar > 0n) {
+    if (scalar % 2n === 1n) res = edwardsAdd(res, base);
+    base = edwardsAdd(base, base);
+    scalar = scalar / 2n;
+  }
+  return res;
+}
+
+function derivePublicHex(privHex) {
+  const bytes = new Uint8Array(privHex.match(/.{1,2}/g).map(byte => parseInt(byte, 16)));
+  
+  let scalar = 0n;
+  for (let i = 0; i < 32; i++) {
+    scalar |= BigInt(bytes[i]) << BigInt(i * 8);
+  }
+  scalar &= (1n << 254n) - 1n;
+  scalar |= 1n << 254n;
+
+  const Gy = (4n * inv(5n)) % P;
+  const Gx = 15112221349535400772501151409588531511454012693041857206046113283949847762202n;
+  const G = [Gx, Gy];
+
+  const A = edwardsScalarMul(G, scalar);
+  let y = A[1];
+  if (A[0] % 2n !== 0n) {
+    y |= 1n << 255n;
+  }
+
+  let outHex = "";
+  for (let i = 0; i < 32; i++) {
+    const byteVal = Number((y >> BigInt(i * 8)) & 0xFFn);
+    outHex += byteVal.toString(16).padStart(2, '0').toUpperCase();
+  }
+  return outHex;
+}
+
+async function sha512(msgUint8) {
+  const buffer = await window.crypto.subtle.digest("SHA-512", msgUint8);
+  return new Uint8Array(buffer);
+}
+
+async function signMessage(privHex, pubHex, messageText) {
+  const privBytes = new Uint8Array(privHex.match(/.{1,2}/g).map(byte => parseInt(byte, 16)));
+  const pubBytes = new Uint8Array(pubHex.match(/.{1,2}/g).map(byte => parseInt(byte, 16)));
+  const msgBytes = new TextEncoder().encode(messageText);
+  const hash1 = await sha512(privBytes);
+  let scalar = 0n;
+  for (let i = 0; i < 32; i++) scalar |= BigInt(hash1[i]) << BigInt(i * 8);
+  scalar &= (1n << 254n) - 1n;
+  scalar |= 1n << 254n;
+  const rInput = new Uint8Array(32 + msgBytes.length);
+  rInput.set(hash1.slice(32, 64), 0);
+  rInput.set(msgBytes, 32);
+  const rHash = await sha512(rInput);
+  let r = 0n;
+  for (let i = 0; i < 64; i++) r |= BigInt(rHash[i]) << BigInt(i * 8);
+  r = r % L;
+  const Gy = (4n * inv(5n)) % P;
+  const Gx = 15112221349535400772501151409588531511454012693041857206046113283949847762202n;
+  const R = edwardsScalarMul([Gx, Gy], r);
+  let Ry = R[1];
+  if (R[0] % 2n !== 0n) Ry |= 1n << 255n;
+  const RBytes = new Uint8Array(32);
+  for (let i = 0; i < 32; i++) RBytes[i] = Number((Ry >> BigInt(i * 8)) & 0xFFn);
+  const kInput = new Uint8Array(32 + 32 + msgBytes.length);
+  kInput.set(RBytes, 0);
+  kInput.set(pubBytes, 32);
+  kInput.set(msgBytes, 64);
+  const kHash = await sha512(kInput);
+  let k = 0n;
+  for (let i = 0; i < 64; i++) k |= BigInt(kHash[i]) << BigInt(i * 8);
+  k = k % L;
+  const s = (r + k * scalar) % L;
+  const SBytes = new Uint8Array(32);
+  for (let i = 0; i < 32; i++) SBytes[i] = Number((s >> BigInt(i * 8)) & 0xFFn);
+  const signatureBytes = new Uint8Array(64);
+  signatureBytes.set(RBytes, 0);
+  signatureBytes.set(SBytes, 32);
+  return Array.from(signatureBytes).map(b => b.toString(16).padStart(2, '0').toUpperCase()).join('');
+}
+
+
+</script>
+<style>
+body{
+  font-family: Comic Sans MS;
+  background-color: #9f8767;
+  font-size:2em;
+}
+textarea{
+  font-family: Comic Sans MS;
+  background-color: #9f8767;
+  font-size:0.6em;
+    
+}
+input{
+  font-family: Comic Sans MS;
+  background-color: #9f8767;
+  font-size:0.6em;
+  width:6em;
+}
+.button{
+    border:solid;
+    width:6em;
+    text-align:center;
+    cursor:pointer;
+}
+.button:hover{
+    background-color:#808080;
+}
+.button:active{
+    background-color:#00ff0080;
+}
+
+#hexkey{
+    width:30em;
+}
+#base64key{
+    width:30em;
+}
+
+</style>
+</body>
+</html>
