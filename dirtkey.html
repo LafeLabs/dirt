@@ -3,6 +3,7 @@
 <head>
     <link href="data:image/x-icon;base64,AAABAAEAEBAQAAEABAAoAQAAFgAAACgAAAAQAAAAIAAAAAEABAAAAAAAgAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAB/3gAA//8AAPb/AAD//wAA//8AAP/7AAD/3wAA3/8AAP7/AAD//wAA//8AAP93AADv/wAA//8AAP//AAB+/gAA" rel="icon" type="image/x-icon">
 <title>dicekey</title>
+<script src = "dirt.js"></script>
 </head>
 <body>
 <p>TO CREATE A KEY ROLL 10 SIX SIDED DICE TEN TIMES TO GET TEN SETS OF TEN NUMBERS FROM 1 THRU 6</p>
@@ -23,12 +24,21 @@
         </td>
     </tr>
 </table>
-<H1>ENTER JSON:</H1>
+<H3>ENTER UN-SIGNED:</H3>
 <textarea id = "json"></textarea>
 <div class = "button" id  = "signjsonbutton">SIGN JSON</div>
-<input id = "signature"></input>
+<span>SIGNATURE:</span><input id = "signature"></input>
 
+<H3>ENTER SIGNED JSON TO VALIDATE</H3>
+<textarea id = "signed-json"></textarea>
+<span>SIGNATURE:</span><input id = "input-signature"></input>
+<div class = "button" id  = "validatebutton">VALIDATE</div>
+<div id = "validoutput">???</div>
 <script>
+    
+dirtkey = {};
+
+
 diceInputs = [];
 for(let index = 0;index < 10;index++){
     let newtr= document.createElement("tr");
@@ -51,6 +61,15 @@ document.getElementById("signature").value = "";
 document.getElementById("public").value = "";
 document.getElementById("json").value = '{}';
 
+load_file("dirtkey.json").then(
+    filedata => {
+        dirtkey = JSON.parse(filedata);
+        document.getElementById("public").value = dirtkey.public;        
+        document.getElementById("private").value = dirtkey.private;        
+
+    }
+);
+
 document.getElementById("keybutton").onclick = function(){
     allDiceRolled = true;
     for(let index = 0;index < 10;index++){
@@ -68,7 +87,11 @@ document.getElementById("keybutton").onclick = function(){
         }
         const keys = generateKeyFormats(rolls);
         document.getElementById("private").value = keys.hex;
-        document.getElementById("public").value = derivePublicHex(keys.hex);
+        dirtkey.private = keys.hex;
+        dirtkey.public = derivePublicHex(keys.hex);
+        document.getElementById("public").value = dirtkey.public;
+        data = JSON.stringify(dirtkey,null,"  ");
+        save_file("dirtkey.json",data);
     }
     else{
         alert("roll more dice and enter numbers in inputs(100 total)");

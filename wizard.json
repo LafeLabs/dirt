@@ -1,0 +1,19 @@
+{
+    "name":"dirt",
+    "nodes":[
+        {
+            "description":"south platte river internet of sticks",
+            "name":"southplattedotnet",
+            "action":"write url on stick at the river",
+            "web":"https://southplatte.net/",
+            "map":"https://www.openstreetmap.org/#map=19/39.754361/-105.008655"
+        },
+        {
+            "description":"union station internet of trash",
+            "name":"unionstationdotlol",
+            "action":"write url on cardboard sign at union station",
+            "web":"https://unionstation.lol/",
+            "map":"https://www.openstreetmap.org/#map=18/39.753676/-105.000914"
+        }
+        ]
+}
